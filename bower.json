@@ -1,0 +1,17 @@
+{
+    "name": "report",
+    "version": "0.0.1",
+    "homepage": "http://imweb.io/BetterJS/report/index.html",
+    "author": "kael",
+    "description": "client report",
+    "main": "dist/report.js",
+    "license": "MIT",
+    "keywords": ["report"],
+    "ignore": [
+        "**/.*",
+        "components",
+        "node_modules",
+        "bower_components",
+        "test"
+    ]
+}

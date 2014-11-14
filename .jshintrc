@@ -1,0 +1,162 @@
+{
+    // 参考 http://jslinterrors.com/
+    // ==============预定义变量============
+    "globals":{
+        "$": true,
+        "jQuery": true,
+        "define": true,
+        "require": true,
+        "it": true,
+        "before": true,
+        "describe": true,
+        "beforeEach": true,
+        "afterEach": true
+    },
+
+    // ==============Legacy Options============
+    // 注: 这些选项继承自jslint
+
+    // 当变量名以"_"开头或结尾时,是否告警
+    "nomen": false,
+    // 是否只允许出现一个var在函数中
+    "onevar": false,
+    // 是否遇到第一个错误的时候就终止
+    "passfail": false,
+    // 让JSHint检查你的代码是否违反道格拉斯的JS编码风格(严格的空白规范??).
+    "white": false,
+    // 最大错误数目,超过则停止分析(默认:50)
+    "maxerr": 50,
+
+    // ==============Environments Options============
+
+    // 是否预定义现代浏览器暴露出来的全局变量（不包括alert和console）
+    "browser": true,
+
+    // 是否预定义console,alert这种开发阶段的调试代码
+    "devel": true,
+
+    // 该选项定义了一些非标准但广泛使用的全局变量，像"escape"和"unescape".
+    "nonstandard": true,
+
+    // ==============Enforcing Options============
+
+    // 禁止使用位运算符
+    "bitwise": true,
+    // 只允许使用camelCase or UPPER_CASE
+    "camelcase": false,
+    // 必须给block加括号
+    "curly": false,
+    // 不安全的== (会建议换成===或者!==)
+    "eqeqeq": false,
+    // 不安全的for in
+    "forin": false,
+    // 立即函数调用必须用(function(){}())而不是(function(){})()
+    "immed": true,
+    // 必须先定义再使用
+    "latedef": false,
+    // 构造函数名的首字母必须大写
+    "newcap": true,
+    // 禁止arguments.caller和arguments.callee的使用(ES5的严格模式中被禁用了,并且不是所有js实现中都有)
+    "noarg": true,
+    // 禁止空的代码块或未赋值的构造器
+    "noempty": false,
+    // 不允许不做赋值的构造函数
+    "nonew": true,
+    // 不允许使用++或者--的操作符
+    "plusplus": false,
+    // 正则中不允许使用.或者[^…]
+    "regexp": false,
+    // 未定义的XXX
+    "undef": true,
+    // 未使用的XXX
+    "unused": false,
+    // 需要使用strict mode，详见http:// ejohn.org/blog/ecmascript-5-strict-mode-json-and-more/
+    "strict": false,
+    // 行末有多余的空格
+    "trailing": false,
+
+    // 配置单双引号规则: "false"或者不设置 不做限制  "single" 只许单引号  "double" 只许双引号 "true" 两者选其一,但不能同时出现
+    "quotmark": "false",
+
+    // 配置缩进规则: 设置缩进对应的空格数,如不设置,则不对缩进做要求
+    // 注: 这里配置了indent,则即使上面的white设置了false,也还是会导致 swindent 报warning(https:// github.com/jshint/jshint/issues/935)
+    // TODO:确认jshint解决了 swindent 的支持后可重新配置此项
+    // "indent": 4,
+
+    // 配置单行代码的最大长度
+    // "maxlen": 120,
+
+    // 配置函数的最多参数个数: 参数过多时,可读性下降,可考虑用options对象字段来减少参数个数
+    // "maxparams": 5,
+
+    // 配置函数内代码块嵌套最多层数
+    // "maxdepth": 5,
+
+    // 配置函数内最多有多少条语句(一个函数声明会被当作一条语句)
+    // "maxstatements": 50,
+
+    // 配置最大圈复杂度(http://en.wikipedia.org/wiki/Cyclomatic_complexity)
+    // "maxcomplexity": 10, // TODO:打开来优化代码复杂度
+
+
+    // ==============Relaxing Options============
+
+    // 代码末尾缺失分号,是否放过
+    "asi": false,
+    // for等预期是==的地方用了=,是否放过
+    "boss": false,
+    // 代码中有debugger语句,是否放过
+    "debug": false,
+    // 使用"=="来比较变量与null,是否放过
+    "eqnull": false,
+    // ES5语法校验报警,是否放过
+    "es5": false,
+    // ECMAScript 6语法校验报警,是否放过
+    "esnext": true,
+    // 代码中使用了eval,是否放过
+    "evil": false,
+    // 只允许在函数调用或赋值时使用表达式(原因???)  2 > 1 ? (alert(1)) : (alert(2));
+    "expr": true,
+    // 在控制语句中定义了变量，却在控制语句之外使用变量  function(){ if(1) {var x = 0;} x = x + 1;}
+    "funcscope": false,
+    // 使用了全局级别的严格模式,是否放过
+    "globalstrict": false,
+    // 使用了__iterator__这个属性(并非所有浏览器支持), 是否放过 (原因???)
+    "iterator": false,
+
+
+    // 是否允许单行语句块中最后一条语句不写分号
+    "lastsemic": false,
+    // 是否允许出现不安全的换行(示例???)
+    "laxbreak": true,
+    // 是否允许逗号出现在行首的换行方式
+    "laxcomma": false,
+    // 是否允许在循环里定义函数
+    "loopfunc": false,
+    // 是否允许多行字符串(原因???)
+    "multistr": true,
+    // 是否允许在代码中使用__proto__属性(并非所有浏览器支持)
+    "proto": false,
+    // 是否允许在switch语句中只出现一个case
+    "onecase": true,
+    // 是否允许unescaped - in the end of regular expressions.
+    "regexdash": false,
+    // 是否允许在代码中使用"javascript:..."这样的url
+    "scripturl": true,
+    // 是否使用smarttab风格混用tab和space(http:// www.emacswiki.org/emacs/SmartTabs)
+    "smarttabs": false,
+    // 是否允许使用shadow变量(shadow变量：当一个变量所在的作用域之外还有一个同名的变量，称为shadow变量)
+    // http:// stackoverflow.com/questions/5373278/variable-shadowing-in-javascript
+    "shadow": false,
+    // 是否允许用obj['name']和obj.name两种方式访问对象的属性
+    "sub": true,
+    // 是否允许使用像"new function() {...}"这样怪异的构造器
+    "supernew": true,
+    // 是否允许在严格模式下的非构造函数中使用this(该选项只能用于函数作用域中)
+    "validthis": false,
+
+    // Missing radix parameter to parseInt (defaults to 10)
+    "-W065": false,
+    // Literal accessor is better written in dot notation
+    "-W069": false
+}

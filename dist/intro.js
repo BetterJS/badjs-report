@@ -1,0 +1,1 @@
+window.__error__=window.__error__||[],window.onerror=function(a,b,c,d,e){window.__error__.push({msg:a,url:b||location.href,line:c,col:d,error:e})};
