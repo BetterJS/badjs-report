@@ -5,7 +5,7 @@
  * Copyright (c) 2014 kael
  * Licensed under the MIT license.
  */
-(function(global) {
+var REPORT = (function(global) {
 
     var _error = global.__error__;
     var _config = {
@@ -23,6 +23,7 @@
 
     var _imgs = [];
     var _sendMsg = function() {
+        if (!_config.report) return;
         var img = new Image();
         _imgs.push(img);
         var error_list = [];
@@ -49,22 +50,34 @@
         setTimeout(_run, _config.delay);
     };
 
+    var _isInited = false;
     var report = {
-        pushMsg: function(msg) {
+        pushMsg: function(msg) { // 将错误推到缓存池
             _error.push(_isOBJ(msg) ? msg : {
                 msg: msg
             });
+            return report;
         },
-        init: function(config) {
+        report: function() { // 立即上报
+            _sendMsg();
+            return report;
+        },
+        init: function(config) { // 初始化
             if (_isOBJ(config)) {
                 for (var key in config) {
                     _config[key] = config[key];
                 }
             }
-            _config.report = _config.url + "?id={{id}}&uin={{uin}}&msg="
-                .replace(/{{id}}/, parseInt(_config.id, 10))
-                .replace(/{{uin}}/, parseInt(_config.uin, 10));
-            _run();
+            // 没有设置id将不上报
+            var id = parseInt(_config.id, 10);
+            if (id) {
+                _config.report = _config.url + "?id={{id}}&uin={{uin}}&msg="
+                    .replace(/{{id}}/, id)
+                    .replace(/{{uin}}/, parseInt(_config.uin, 10));
+                !_isInited && _run();
+                _isInited = true;
+            }
+            return report;
         }
     };
 
