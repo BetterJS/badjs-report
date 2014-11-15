@@ -22,7 +22,7 @@ var REPORT = (function(global) {
     };
 
     var _imgs = [];
-    var _sendMsg = function() {
+    var _send = function() {
         if (!_config.report) return;
         var img = new Image();
         _imgs.push(img);
@@ -45,20 +45,20 @@ var REPORT = (function(global) {
     };
 
     var _run = function(){
-        _sendMsg();
+        _send();
         setTimeout(_run, _config.delay);
     };
 
     var _isInited = false;
     var report = {
-        pushMsg: function(msg) { // 将错误推到缓存池
+        push: function(msg) { // 将错误推到缓存池
             _error.push(_isOBJ(msg) ? msg : {
                 msg: msg
             });
             return report;
         },
         report: function() { // 立即上报
-            _sendMsg();
+            _send();
             return report;
         },
         init: function(config) { // 初始化

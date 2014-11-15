@@ -61,11 +61,25 @@
         <article><h1>report</h1><blockquote>
 <p>client report</p>
 </blockquote>
-<h2>Getting Started</h2><p>Install the module with: <code>bower install https://github.com/imweb/report.git</code></p>
-<h2>Page</h2><p><a href="https://imweb.io/report/index.html">https://imweb.io/report/index.html</a></p>
-<h2>Documentation</h2><p><a href="https://imweb.io/report/doc/index.html">https://imweb.io/report/doc/index.html</a></p>
-<h2>Examples</h2><p><a href="https://imweb.io/report/example/index.html">https://imweb.io/report/example/index.html</a></p>
-<h2>Contributing</h2><p>kael</p>
+<h2>Getting Started</h2><pre class="prettyprint source"><code>// 初始化
+REPORT.init({
+  id: 1,
+  uin: 123,
+  url: &quot;/report&quot;,
+  ignore: [/Script Error:/]
+});
+
+// 手动上报
+REPORT.push({
+  msg: &quot;xx load error&quot;,
+  url: &quot;/xx.js&quot;
+});
+
+// 立即上报
+REPORT.report();
+
+// 可以链式调用
+REPORT.init().push({}).report();</code></pre><h2>Contributing</h2><p>kael</p>
 <h2>License</h2><p>Copyright (c) 2014 kael MIT.</p></article>
     </section>
 

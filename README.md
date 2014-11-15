@@ -2,16 +2,27 @@
 > client report
 
 ## Getting Started
-Install the module with: `bower install https://github.com/imweb/report.git`
+```
+// 初始化
+REPORT.init({
+  id: 1,
+  uin: 123,
+  url: "/report",
+  ignore: [/Script Error:/]
+});
 
-## Page
-[https://imweb.io/report/index.html](https://imweb.io/report/index.html)
+// 手动上报
+REPORT.push({
+  msg: "xx load error",
+  url: "/xx.js"
+});
 
-## Documentation
-[https://imweb.io/report/doc/index.html](https://imweb.io/report/doc/index.html)
+// 立即上报
+REPORT.report();
 
-## Examples
-[https://imweb.io/report/example/index.html](https://imweb.io/report/example/index.html)
+// 可以链式调用
+REPORT.init().push({}).report();
+```
 
 ## Contributing
 kael
