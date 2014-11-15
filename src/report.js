@@ -41,8 +41,7 @@ var REPORT = (function(global) {
             }
             !isIgnore && error_list.push(error);
         }
-        var _src = _config.report + encodeURIComponent(JSON.stringify(error_list));
-        img.src = _src;
+        img.src = _config.report + encodeURIComponent(JSON.stringify(error_list));
     };
 
     var _run = function(){
