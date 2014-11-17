@@ -21,6 +21,21 @@ var REPORT = (function(global) {
         return Object.prototype.toString.call(o) === "[object " + (type || "Object") + "]";
     };
 
+    var _error_tostring = function(error, index) {
+        var params = [];
+        var stringify = [];
+        if (_isOBJ(error)) {
+            for (var key in error) {
+                var value = error[key] || "";
+                if (value) {
+                    stringify.push(key + ":" + value);
+                    params.push(key + "[{{index}}]=" + encodeURIComponent(value));
+                }
+            }
+        }
+        return [params.join("&").replace(/{{index}}/g, parseInt(index, 10) || 0), stringify.join(",")];
+    };
+
     var _imgs = [];
     var _send = function() {
         if (!_config.report) return;
@@ -30,18 +45,18 @@ var REPORT = (function(global) {
         while(_error.length) {
             var isIgnore = false;
             var error = _error.shift();
-            var error_str = JSON.stringify(error);
+            var error_str = _error_tostring(error, error_list.length); // JSON.stringify(error);
             for (var i = 0, l = _config.ignore; i < l; i++) {
                 var rule = _config.ignore[i];
-                if ((_isOBJ(rule, "RegExp") && rule.test(error_str)) ||
-                    (_isOBJ(rule, "Function") && rule(error, error_str))) {
+                if ((_isOBJ(rule, "RegExp") && rule.test(error_str[1])) ||
+                    (_isOBJ(rule, "Function") && rule(error, error_str[1]))) {
                     isIgnore = true;
                     break;
                 }
             }
-            !isIgnore && error_list.push(error);
+            !isIgnore && error_list.push(error_str[0]); // error_list.push(error);
         }
-        img.src = _config.report + encodeURIComponent(JSON.stringify(error_list));
+        error_list.length  && (img.src = _config.report + error_list.join("&")); // encodeURIComponent(JSON.stringify(error_list));
     };
 
     var _run = function(){
@@ -70,7 +85,7 @@ var REPORT = (function(global) {
             // 没有设置id将不上报
             var id = parseInt(_config.id, 10);
             if (id) {
-                _config.report = _config.url + "?id={{id}}&uin={{uin}}&msg="
+                _config.report = (_config.url + "?id={{id}}&uin={{uin}}&from=" + encodeURIComponent(location.href) + "&")
                     .replace(/{{id}}/, id)
                     .replace(/{{uin}}/, parseInt(_config.uin, 10));
                 !_isInited && _run();

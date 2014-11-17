@@ -3,10 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>example</title>
+    <script src="../src/intro.js"></script>
 </head>
 <body>
-
-    
-    <script src="http://requirejs.org/docs/release/2.1.15/minified/require.js"></script>
+    <script src="../src/report.js"></script>
+    <script>
+        REPORT.init({
+            id: 1,
+            url: "/report"
+        });
+        setTimeout(function(){
+            err1;
+        }, 10);
+        setTimeout(function(){
+            err2;
+        }, 20);
+        setTimeout(function(){
+            err3;
+        }, 30);
+    </script>
 </body>
 </html>

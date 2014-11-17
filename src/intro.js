@@ -9,7 +9,7 @@ window.__error__ = window.__error__ || [];
 window.onerror = function(msg, url, line, col, error) {
     window.__error__.push({
         msg: msg,
-        url: url || location.href,
+        url: url,
         line: line,
         col: col,
         error: error
