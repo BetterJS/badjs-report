@@ -23,6 +23,7 @@ var REPORT = (function(global) {
         id: 0,
         uin: 0,
         url: "",
+        combo: 0,
         level: 1,
         ignore: [],
         delay: 300
@@ -33,6 +34,7 @@ var REPORT = (function(global) {
     };
 
     var _error_tostring = function(error, index) {
+        var param = [];
         var params = [];
         var stringify = [];
         if (_isOBJ(error)) {
@@ -40,19 +42,19 @@ var REPORT = (function(global) {
                 var value = error[key] || "";
                 if (value) {
                     stringify.push(key + ":" + value);
+                    param.push(key + "=" + encodeURIComponent(value));
                     params.push(key + "[" + index + "]=" + encodeURIComponent(value));
                 }
             }
         }
-        return [params.join("&"), stringify.join(",")];
+        return [params.join("&"), stringify.join(","), param.join("&")];
     };
 
     var _imgs = [];
     var _send = function() {
         if (!_config.report) return;
-        var img = new Image();
-        _imgs.push(img);
         var error_list = [];
+        var img = null;
         while (_error.length) {
             var isIgnore = false;
             var error = _error.shift();
@@ -64,9 +66,22 @@ var REPORT = (function(global) {
                     isIgnore = true;
                     break;
                 }
-            }!isIgnore && error_list.push(error_str[0]); // error_list.push(error);
+            }
+            if (!isIgnore) {
+                if (_config.combo) {
+                    error_list.push(error_str[0]);
+                } else {
+                    img = new Image();
+                    _imgs.push(img);
+                    img.src = _config.report + error_str[2];
+                }
+            }
         }
-        error_list.length && (img.src = _config.report + error_list.join("&")); // encodeURIComponent(JSON.stringify(error_list));
+        if (_config.combo && error_list.length) {
+            img = new Image();
+            _imgs.push(img);
+            img.src = _config.report + error_list.join("&");
+        }
     };
 
     var _run = function() {
