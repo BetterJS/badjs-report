@@ -6,8 +6,19 @@
  * Licensed under the MIT license.
  */
 var REPORT = (function(global) {
+    if (global.REPORT) return global.REPORT;
 
-    var _error = global.__error__;
+    var _error = [];
+    global.onerror = function(msg, url, line, col, error) {
+        _error.push({
+            msg: msg,
+            url: url,
+            line: line,
+            col: col,
+            error: error
+        });
+    };
+
     var _config = {
         id: 0,
         uin: 0,
@@ -29,11 +40,11 @@ var REPORT = (function(global) {
                 var value = error[key] || "";
                 if (value) {
                     stringify.push(key + ":" + value);
-                    params.push(key + "[{{index}}]=" + encodeURIComponent(value));
+                    params.push(key + "[" + index + "]=" + encodeURIComponent(value));
                 }
             }
         }
-        return [params.join("&").replace(/{{index}}/g, parseInt(index, 10) || 0), stringify.join(",")];
+        return [params.join("&"), stringify.join(",")];
     };
 
     var _imgs = [];
@@ -42,7 +53,7 @@ var REPORT = (function(global) {
         var img = new Image();
         _imgs.push(img);
         var error_list = [];
-        while(_error.length) {
+        while (_error.length) {
             var isIgnore = false;
             var error = _error.shift();
             var error_str = _error_tostring(error, error_list.length); // JSON.stringify(error);
@@ -53,19 +64,20 @@ var REPORT = (function(global) {
                     isIgnore = true;
                     break;
                 }
-            }
-            !isIgnore && error_list.push(error_str[0]); // error_list.push(error);
+            }!isIgnore && error_list.push(error_str[0]); // error_list.push(error);
         }
-        error_list.length  && (img.src = _config.report + error_list.join("&")); // encodeURIComponent(JSON.stringify(error_list));
+        error_list.length && (img.src = _config.report + error_list.join("&")); // encodeURIComponent(JSON.stringify(error_list));
     };
 
-    var _run = function(){
-        _send();
-        setTimeout(_run, _config.delay);
+    var _run = function() {
+        setTimeout(function() {
+            _send();
+            _run();
+        }, _config.delay);
     };
 
     var _isInited = false;
-    var report = {
+    var report = global.REPORT = {
         push: function(msg) { // 将错误推到缓存池
             _error.push(_isOBJ(msg) ? msg : {
                 msg: msg
@@ -85,9 +97,11 @@ var REPORT = (function(global) {
             // 没有设置id将不上报
             var id = parseInt(_config.id, 10);
             if (id) {
-                _config.report = (_config.url + "?id={{id}}&uin={{uin}}&from=" + encodeURIComponent(location.href) + "&")
-                    .replace(/{{id}}/, id)
-                    .replace(/{{uin}}/, parseInt(_config.uin, 10));
+                _config.report = _config.url
+                    + "?id=" + id
+                    + "&uin=" + parseInt(_config.uin, 10)
+                    + "&from=" + encodeURIComponent(location.href)
+                    + "&";
                 !_isInited && _run();
                 _isInited = true;
             }
