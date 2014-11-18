@@ -26,7 +26,7 @@ var REPORT = (function(global) {
         combo: 0,
         level: 1,
         ignore: [],
-        delay: 300
+        delay: 100
     };
 
     var _isOBJ = function(o, type) {
@@ -77,10 +77,11 @@ var REPORT = (function(global) {
                 }
             }
         }
-        if (_config.combo && error_list.length) {
+        var count = error_list.length;
+        if (_config.combo && count) {
             img = new Image();
             _imgs.push(img);
-            img.src = _config.report + error_list.join("&");
+            img.src = _config.report + error_list.join("&") + "&count" + count;
         }
     };
 
@@ -99,7 +100,8 @@ var REPORT = (function(global) {
             });
             return report;
         },
-        report: function() { // 立即上报
+        report: function(msg) { // 立即上报
+            msg && report.push(msg);
             _send();
             return report;
         },
