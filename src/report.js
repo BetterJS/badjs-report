@@ -5,7 +5,7 @@
  * Copyright (c) 2014 kael
  * Licensed under the MIT license.
  */
-var REPORT = (function(global) {
+var BJ_REPORT = (function(global) {
     if (global.REPORT) return global.REPORT;
 
     var _error = [];
@@ -81,7 +81,7 @@ var REPORT = (function(global) {
         if (_config.combo && count) {
             img = new Image();
             _imgs.push(img);
-            img.src = _config.report + error_list.join("&") + "&count" + count;
+            img.src = _config.report + error_list.join("&") + "&count" + count + "&t=" + (+new Date);
         }
     };
 
@@ -114,9 +114,9 @@ var REPORT = (function(global) {
             // 没有设置id将不上报
             var id = parseInt(_config.id, 10);
             if (id) {
-                _config.report = _config.url
+                _config.report = (_config.url || "http://badjs2.qq.com/badjs")
                     + "?id=" + id
-                    + "&uin=" + parseInt(_config.uin, 10)
+                    + "&uin=" + parseInt(_config.uin || (document.cookie.match(/uin=\D+(\d+)/) || [])[1], 10)
                     + "&from=" + encodeURIComponent(location.href)
                     + "&";
                 !_isInited && _run();

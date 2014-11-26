@@ -1,27 +1,32 @@
-# report
-> client report
+# BJ_REPORT
 
 ## Getting Started
 ```
 // 初始化
-REPORT.init({
+BJ_REPORT.init({
   id: 1,
   uin: 123,
-  url: "/report",
+  url: "http://badjs2.qq.com/badjs",
   ignore: [/Script Error:/]
 });
 
 // 手动上报
-REPORT.push({
+BJ_REPORT.push("error msg");
+BJ_REPORT.push({
   msg: "xx load error",
   url: "/xx.js"
 });
 
 // 立即上报
-REPORT.report();
+BJ_REPORT.report();
+BJ_REPORT.report("error msg");
+BJ_REPORT.report({
+  msg: "xx load error",
+  url: "/xx.js"
+});
 
 // 可以链式调用
-REPORT.init().push({}).report();
+BJ_REPORT.init({}).push("error msg").report();
 ```
 
 ## Contributing
