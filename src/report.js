@@ -24,7 +24,7 @@ var BJ_REPORT = (function(global) {
         uin: 0,
         url: "",
         combo: 0,
-        level: 1,
+        level: 4, // 1-debug 2-info 4-error 8-fail
         ignore: [],
         delay: 100
     };
@@ -38,6 +38,7 @@ var BJ_REPORT = (function(global) {
         var params = [];
         var stringify = [];
         if (_isOBJ(error)) {
+            error.level = error.level || _config.level;
             for (var key in error) {
                 var value = error[key] || "";
                 if (value) {
