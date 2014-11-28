@@ -74,7 +74,7 @@ var BJ_REPORT = (function(global) {
                 } else {
                     img = new Image();
                     _imgs.push(img);
-                    img.src = _config.report + error_str[2];
+                    img.src = _config.report + error_str[2] + "&t=" + (+new Date);
                 }
             }
         }
