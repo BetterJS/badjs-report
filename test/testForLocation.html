@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Test</title>
+    </head>
+    <body>
+
+        <script src="../src/report.js"></script>
+        <script>
+
+            BJ_REPORT.init({
+                id :222,
+                uin: 1,
+                url : 'http://127.0.0.1/badjs'
+
+            });
+
+            setTimeout(function (){
+                throw 'test error';
+            },1000)
+        </script>
+    </body>
+</html>

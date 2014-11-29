@@ -12,11 +12,14 @@ var BJ_REPORT = (function(global) {
     global.onerror = function(msg, url, line, col, error) {
         _error.push({
             msg: msg,
-            url: url,
-            line: line,
-            col: col,
+            target: url,
+            rowNum : line,
+            colNum : col,
             error: error
         });
+
+        _run();
+
     };
 
     var _config = {
@@ -74,7 +77,7 @@ var BJ_REPORT = (function(global) {
                 } else {
                     img = new Image();
                     _imgs.push(img);
-                    img.src = _config.report + error_str[2] + "&t=" + (+new Date);
+                    img.src = _config.report + error_str[2] + "&_t=" + (+new Date);
                 }
             }
         }
@@ -82,14 +85,14 @@ var BJ_REPORT = (function(global) {
         if (_config.combo && count) {
             img = new Image();
             _imgs.push(img);
-            img.src = _config.report + error_list.join("&") + "&count" + count + "&t=" + (+new Date);
+            img.src = _config.report + error_list.join("&") + "&count" + count + "&_t=" + (+new Date);
         }
     };
 
     var _run = function() {
         setTimeout(function() {
             _send();
-            _run();
+//            _run();
         }, _config.delay);
     };
 
@@ -120,7 +123,7 @@ var BJ_REPORT = (function(global) {
                     + "&uin=" + parseInt(_config.uin || (document.cookie.match(/uin=\D+(\d+)/) || [])[1], 10)
                     + "&from=" + encodeURIComponent(location.href)
                     + "&";
-                !_isInited && _run();
+                //!_isInited && _run();
                 _isInited = true;
             }
             return report;
