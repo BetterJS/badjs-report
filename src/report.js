@@ -121,7 +121,7 @@ var BJ_REPORT = (function(global) {
                 _config.report = (_config.url || "http://badjs2.qq.com/badjs")
                     + "?id=" + id
                     + "&uin=" + parseInt(_config.uin || (document.cookie.match(/uin=\D+(\d+)/) || [])[1], 10)
-                    + "&from=" + encodeURIComponent(location.href)
+                    + "&target=" + encodeURIComponent(location.href)
                     + "&";
                 //!_isInited && _run();
                 _isInited = true;
