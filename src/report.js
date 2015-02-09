@@ -1,4 +1,4 @@
-/*!
+﻿/*!
  * @module report
  * @author kael
  * @date @DATE
@@ -45,6 +45,9 @@ var BJ_REPORT = (function(global) {
             for (var key in error) {
                 var value = error[key] || "";
                 if (value) {
+                    if(typeof value =='object'){
+                        value = JSON.stringify(value);
+                    }
                     stringify.push(key + ":" + value);
                     param.push(key + "=" + encodeURIComponent(value));
                     params.push(key + "[" + index + "]=" + encodeURIComponent(value));
