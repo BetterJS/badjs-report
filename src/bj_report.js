@@ -26,7 +26,7 @@ var BJ_REPORT = (function(global) {
         id: 0,
         uin: 0,
         url: "",
-        combo: 0,
+        combo: 1,
         level: 4, // 1-debug 2-info 4-error 8-fail
         ignore: [],
         delay: 100
