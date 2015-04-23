@@ -1,7 +1,7 @@
 {
-    "name": "report",
-    "version": "0.0.1",
-    "main": "dist/report.js",
+    "name": "BJ_REPORT",
+    "version": "1.0",
+    "main": "dist/bj_report.js",
     "description": "client report",
     "homepage": "http://imweb.io/BetterJS/report/index.html",
     "author": "kael",
@@ -17,14 +17,10 @@
         "chai": "~1.4.0",
         "grunt-mocha": "0.3",
         "requirejs": "^2.1.14",
-        "zepto": "*",
         "jquery": "*",
-        "doc-template": "*",
-        "grunt-jsdoc-update": "*",
         "grunt-contrib-copy": "~0.4.1",
         "grunt-contrib-clean": "^0.6.0",
         "grunt-contrib-jshint": "~0.6.2",
-        "grunt-contrib-cssmin": "~0.5.0",
         "grunt-contrib-uglify": "^0.5.1"
     }
 }

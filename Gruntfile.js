@@ -3,8 +3,7 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         clean: {
-            dev: ['dist'],
-            doc: ['doc']
+            dev: ['dist']
         },
         uglify: {
             build: {
@@ -16,16 +15,6 @@ module.exports = function(grunt) {
                         dest: 'dist/'
                     }
                 ]
-            }
-        },
-        jsdoc: {
-            doc: {
-                src: ['src/*.js', 'README.md'],
-                options: {
-                    destination: 'doc/',
-                    template: "node_modules/doc-template/template",
-                    configure: "node_modules/doc-template/template/jsdoc.conf.json"
-                }
             }
         },
         copy: {
@@ -67,7 +56,6 @@ module.exports = function(grunt) {
     });
 
     grunt.loadNpmTasks('grunt-mocha');
-    grunt.loadNpmTasks('grunt-jsdoc-update');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -82,8 +70,7 @@ module.exports = function(grunt) {
     // task
     grunt.registerTask('clear', ['clean']);
     grunt.registerTask('test', ['jshint', 'mocha']);
-    grunt.registerTask('doc', ['clean:doc', 'jsdoc:doc']);
     grunt.registerTask('dev', ['clean:dev', 'jshint', 'uglify']);
-    grunt.registerTask('build', ['clean', 'jshint', 'doc', 'uglify', 'copy:dist', 'cssmin:dist']);
+    grunt.registerTask('build', ['clean', 'jshint',  'uglify', 'copy:dist']);
 
 };
