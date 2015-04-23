@@ -1,7 +1,7 @@
 /* global chai, mocha */
 var assert = chai.assert;
 
-define(['../dist/report'], function(report) {
+define(['../dist/bj_report'], function(report) {
     describe('report', function() {
         describe('example', function() {
             it('should return 5', function() {
