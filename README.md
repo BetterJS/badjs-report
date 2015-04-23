@@ -32,7 +32,7 @@ BJ_REPORT.init({id: 1}).push("error msg").report("error msg 2");
 ```
 
 ## Contributing
-kael
+kael,chriscai
 
 ## License
 Copyright (c) 2014 kael MIT.
