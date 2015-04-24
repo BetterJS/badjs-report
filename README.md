@@ -24,7 +24,7 @@ BJ_REPORT.report({
   url: "/xx.js"
 });
 ```
-当 combo = 1 时候的， 调用 report 立即上报错误
+当 combo = 1 时候的， 调用 report 立即上报错误；<br/>
 当 combo = 0 时候的， 会延迟 delay 毫秒，再合并上报
 <br/>
 #####  延迟上报
@@ -37,7 +37,7 @@ BJ_REPORT.push({
 });
 BJ_REPORT.report();
 ```
-当 combo = 1 时候的， 调用 report ，根据缓冲池中的数据一条条上报，
+当 combo = 1 时候的， 调用 report ，根据缓冲池中的数据一条条上报;<br/>
 当 combo = 0 时候的， 会延迟 delay 毫秒，再合并上报
 <br/>
 
