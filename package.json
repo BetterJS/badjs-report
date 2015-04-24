@@ -1,6 +1,6 @@
 {
     "name": "BJ_REPORT",
-    "version": "1.0",
+    "version": "1.0.0",
     "main": "dist/bj_report.js",
     "description": "client report",
     "homepage": "http://imweb.io/BetterJS/report/index.html",
@@ -21,6 +21,7 @@
         "grunt-contrib-copy": "~0.4.1",
         "grunt-contrib-clean": "^0.6.0",
         "grunt-contrib-jshint": "~0.6.2",
-        "grunt-contrib-uglify": "^0.5.1"
+        "grunt-contrib-uglify": "^0.5.1",
+        "grunt-contrib-concat": "~0.5.1"
     }
 }

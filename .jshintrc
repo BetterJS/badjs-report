@@ -114,7 +114,7 @@
     // ECMAScript 6语法校验报警,是否放过
     "esnext": true,
     // 代码中使用了eval,是否放过
-    "evil": false,
+    "evil": true,
     // 只允许在函数调用或赋值时使用表达式(原因???)  2 > 1 ? (alert(1)) : (alert(2));
     "expr": true,
     // 在控制语句中定义了变量，却在控制语句之外使用变量  function(){ if(1) {var x = 0;} x = x + 1;}

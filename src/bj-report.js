@@ -6,7 +6,7 @@
  * Licensed under the MIT license.
  */
 var BJ_REPORT = (function(global) {
-    if (global.REPORT) return global.REPORT;
+    if (global.BJ_REPORT) return global.BJ_REPORT;
 
     var _error = [];
     global.onerror = function(msg, url, line, col, error) {
@@ -18,7 +18,7 @@ var BJ_REPORT = (function(global) {
             error: error
         });
 
-        _run();
+        _send();
 
     };
 
@@ -29,7 +29,8 @@ var BJ_REPORT = (function(global) {
         combo: 1,
         level: 4, // 1-debug 2-info 4-error 8-fail
         ignore: [],
-        delay: 100
+        delay: 100,
+        submit : null
     };
 
     var _isOBJ = function(o, type) {
@@ -57,11 +58,21 @@ var BJ_REPORT = (function(global) {
         return [params.join("&"), stringify.join(","), param.join("&")];
     };
 
-    var _imgs = [];
+
+
+    var _submit = function (url ){
+        if(_config.submit) {
+            _config.submit(url);
+        }else {
+            var img = new Image();
+            img.src = url;
+        }
+    };
+
+    var error_list = [], comboTimeout = false, comboTimeoutId;
     var _send = function() {
         if (!_config.report) return;
-        var error_list = [];
-        var img = null;
+
         while (_error.length) {
             var isIgnore = false;
             var error = _error.shift();
@@ -78,29 +89,30 @@ var BJ_REPORT = (function(global) {
                 if (_config.combo) {
                     error_list.push(error_str[0]);
                 } else {
-                    img = new Image();
-                    _imgs.push(img);
-                    img.src = _config.report + error_str[2] + "&_t=" + (+new Date);
+                    _submit(_config.report + error_str[2] + "&_t=" + (+new Date));
                 }
             }
         }
-        var count = error_list.length;
-        if (_config.combo && count) {
-            img = new Image();
-            _imgs.push(img);
-            img.src = _config.report + error_list.join("&") + "&count" + count + "&_t=" + (+new Date);
+
+        if (_config.combo) {
+            if(comboTimeout){
+                return ;
+            }
+            comboTimeout = true;
+
+            comboTimeoutId = setTimeout(function () {
+                var count = error_list.length;
+                 _submit(_config.report + error_list.join("&") + "&count" + count + "&_t=" + (+new Date));
+                 error_list = [];
+                 comboTimeout = false;
+             }, _config.delay);
         }
+
     };
 
-    var _run = function() {
-        setTimeout(function() {
-            _send();
-//            _run();
-        }, _config.delay);
-    };
 
     var _isInited = false;
-    var report = global.REPORT = {
+    var report =  {
         push: function(msg) { // 将错误推到缓存池
             _error.push(_isOBJ(msg) ? msg : {
                 msg: msg
@@ -129,9 +141,14 @@ var BJ_REPORT = (function(global) {
                 //!_isInited && _run();
                 _isInited = true;
             }
+
+            _error = [];
+            error_list = [];
+            clearTimeout(comboTimeoutId);
             return report;
         }
     };
+
 
     return report;
 

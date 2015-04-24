@@ -10,7 +10,7 @@ module.exports = function(grunt) {
                 files: [
                     {
                         expand: true,
-                        cwd: 'src/',
+                        cwd: 'dist/',
                         src: ['**/*.js'],
                         dest: 'dist/'
                     }
@@ -23,7 +23,7 @@ module.exports = function(grunt) {
                     {
                         expand: true,
                         cwd: 'src/',
-                        src: ['**/*.{jpg,jpeg,png,gif,ico,webp}'],
+                        src: ['**/*.js'],
                         dest: 'dist/'
                     }
                 ]
@@ -41,6 +41,16 @@ module.exports = function(grunt) {
                 ]
             }
         },
+        concat : {
+            options: {
+                separator: ';'
+            },
+            dist : {
+                src: ['src/bj-report.js' , 'src/bj-wrap.js'],
+                dest: 'dist/bj-reportWrap.js'
+
+            }
+        },
         mocha: {
             all: {
                 src: 'test/index.html',
@@ -51,7 +61,7 @@ module.exports = function(grunt) {
             options: {
                 jshintrc: '.jshintrc'
             },
-            all: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js']
+            all: ['Gruntfile.js', 'src/**/*.js']
         }
     });
 
@@ -60,7 +70,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-concat');
 
     // alias task
     grunt.registerTask('default', ['dev']);
@@ -71,6 +81,6 @@ module.exports = function(grunt) {
     grunt.registerTask('clear', ['clean']);
     grunt.registerTask('test', ['jshint', 'mocha']);
     grunt.registerTask('dev', ['clean:dev', 'jshint', 'uglify']);
-    grunt.registerTask('build', ['clean', 'jshint',  'uglify', 'copy:dist']);
+    grunt.registerTask('build', ['clean', 'jshint', 'copy:dist' ,   'concat:dist'  , 'uglify' ]);
 
 };
