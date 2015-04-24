@@ -5,7 +5,7 @@
     }
 
 
-    // err had stack
+    // err must have stack
     try {
         throw new Error("testError");
     } catch (err) {
