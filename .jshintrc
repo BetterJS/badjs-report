@@ -4,6 +4,8 @@
     "globals":{
         "$": true,
         "jQuery": true,
+        "exports": true,
+        "module": true,
         "define": true,
         "require": true,
         "it": true,

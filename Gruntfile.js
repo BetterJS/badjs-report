@@ -46,7 +46,7 @@ module.exports = function(grunt) {
                 separator: ';'
             },
             dist : {
-                src: ['src/bj-report.js' , 'src/bj-wrap.js'],
+                src: ['src/bj-report.js' , 'src/bj-wrap.js' , 'src/bj-module.js'],
                 dest: 'dist/bj-reportWrap.js'
 
             }

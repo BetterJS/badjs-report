@@ -153,3 +153,12 @@ var BJ_REPORT = (function(global) {
     return report;
 
 }(window));
+
+
+
+if (typeof exports !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
+        exports = module.exports = BJ_REPORT;
+    }
+    exports.BJ_REPORT = BJ_REPORT;
+}
