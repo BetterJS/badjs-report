@@ -102,7 +102,7 @@ var BJ_REPORT = (function(global) {
 
             comboTimeoutId = setTimeout(function () {
                 var count = error_list.length;
-                 _submit(_config.report + error_list.join("&") + "&count" + count + "&_t=" + (+new Date));
+                 _submit(_config.report + error_list.join("&") + "&count=" + count + "&_t=" + (+new Date));
                  error_list = [];
                  comboTimeout = false;
              }, _config.delay);
