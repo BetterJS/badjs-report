@@ -2,7 +2,7 @@
 
 # Installation
 ``` javascript
-npm install bj-report
+npm install badjs-report
 ```
 
 ## Getting Started
