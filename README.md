@@ -1,8 +1,9 @@
 # BJ_REPORT
 
 # Installation
-project: npm install bj-report
-
+``` javascript
+npm install bj-report
+```
 
 ## Getting Started
 ##### 初始化
