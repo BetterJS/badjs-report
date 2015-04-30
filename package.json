@@ -1,10 +1,10 @@
 {
-    "name": "BJ_REPORT",
-    "version": "1.0.0",
+    "name": "bj-report",
+    "version": "1.0.1",
     "main": "dist/bj_report.js",
     "description": "client report",
-    "homepage": "http://imweb.io/BetterJS/report/index.html",
-    "author": "kael",
+    "homepage": "https://github.com/BetterJS/report",
+    "author": "kael,chriscai",
     "repository": {
         "url": "https://github.com/BetterJS/report.git"
     },
