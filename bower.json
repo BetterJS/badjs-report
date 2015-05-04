@@ -1,17 +1,17 @@
 {
-    "name": "report",
-    "version": "0.0.1",
-    "homepage": "http://imweb.io/BetterJS/report/index.html",
+    "name": "badjs-report",
+    "version": "1.0.0",
+    "homepage": "https://github.com/BetterJS/report",
     "author": "kael",
     "description": "client report",
-    "main": "dist/report.js",
+    "main": "dist/bj_report.js",
     "license": "MIT",
     "keywords": ["report"],
     "ignore": [
         "**/.*",
-        "components",
         "node_modules",
         "bower_components",
-        "test"
+        "test",
+        "src"
     ]
 }
