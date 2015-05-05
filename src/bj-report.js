@@ -9,6 +9,7 @@ var BJ_REPORT = (function(global) {
     if (global.BJ_REPORT) return global.BJ_REPORT;
 
     var _error = [];
+    var orgError = global.onerror;
     global.onerror = function(msg, url, line, col, error) {
         _error.push({
             msg: msg,
@@ -19,7 +20,7 @@ var BJ_REPORT = (function(global) {
         });
 
         _send();
-
+        orgError && orgError.apply(global , arguments);
     };
 
     var _config = {

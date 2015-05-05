@@ -4,6 +4,9 @@
 ``` javascript
 npm install badjs-report
 ```
+``` javascript
+bower install https://github.com/BetterJS/report.git
+```
 
 ## Getting Started
 ##### 初始化
