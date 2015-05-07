@@ -57,6 +57,8 @@ BJ_REPORT.init({id: 1}).push("error msg").report("error msg 2");
 <br/>
 <br/>
 ### 高级用法
+>script error  的错误，怎么解决？
+
 由于 BJ_Report 只是重写了onerror 方法而已，而且浏览器的跨域问题不能获得外链 javascript 的错误，所以使用tryjs  进行包裹。
 #### 包裹jquery
 ``` javascript
