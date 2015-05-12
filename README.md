@@ -28,7 +28,7 @@ BJ_REPORT.init({
   target : "xxxx.js"                    //  错误来源的js
 });
 ```
-BJ_Report 是重写了 window.error 进行上报的，无需编写任何捕获错误的代码
+BJ_Report 是重写了 window.onerror 进行上报的，无需编写任何捕获错误的代码
 <br/>
 #####  手动上报
 ``` javascript
