@@ -19,6 +19,7 @@ BJ_REPORT.init({
   url: "http://badjs2.qq.com/badjs",    // 指定上报地址
   ignore: [/Script Error:/],            // 忽略某个错误
   level: 4 // 设置默认的级别              // 上报等级   // 1-debug 2-info 4-error 8-fail
+  target : window.location.href          //  错误来源的页面
 });
 ```
 BJ_Report 是重写了 window.error 进行上报的，无需编写任何捕获错误的代码
@@ -29,7 +30,7 @@ BJ_REPORT.report();
 BJ_REPORT.report("error msg");
 BJ_REPORT.report({
   msg: "xx load error",
-  url: "/xx.js"
+  url: "http://yourwebsite.com"     // 已经默认 http://badjs2.qq.com/badjs
 });
 ```
 当 combo = 1 时候的， 调用 report 立即上报错误；<br/>
@@ -40,7 +41,7 @@ BJ_REPORT.report({
 BJ_REPORT.push("error msg");
 BJ_REPORT.push({
   msg: "xx load error",
-  url: "/xx.js",
+  url: "http://yourwebsite.com",
   level: 8
 });
 BJ_REPORT.report();
