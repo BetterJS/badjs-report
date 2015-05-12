@@ -12,14 +12,20 @@ bower install https://github.com/BetterJS/report.git
 ##### 初始化
 ``` javascript
 BJ_REPORT.init({
+  id: 1                                   // 不指定id将不上报
+});
+```
+##### 配置说明
+``` javascript
+BJ_REPORT.init({
   id: 1,                                // 不指定id将不上报
-  uin: 123,                             // 指定用户 number
+  uin: 123,                             // 指定用户 number , 默认已经读取 qq uin
   combo:0,								// combo 是否合并上报， 0 关闭， 1 启动（默认）
   delay, 100							// 当 combo= 1 可用，延迟多少毫秒，合并缓冲区中的上报
   url: "http://badjs2.qq.com/badjs",    // 指定上报地址
   ignore: [/Script Error:/],            // 忽略某个错误
-  level: 4 // 设置默认的级别              // 上报等级   // 1-debug 2-info 4-error 8-fail
-  target : window.location.href          //  错误来源的页面
+  level: 4 // 设置默认的级别             // 上报等级   // 1-debug 2-info 4-error 8-fail
+  target : "xxxx.js"                    //  错误来源的js
 });
 ```
 BJ_Report 是重写了 window.error 进行上报的，无需编写任何捕获错误的代码
@@ -30,19 +36,17 @@ BJ_REPORT.report();
 BJ_REPORT.report("error msg");
 BJ_REPORT.report({
   msg: "xx load error",
-  url: "http://yourwebsite.com"     // 已经默认 http://badjs2.qq.com/badjs
+  target: "xxx.js"
 });
 ```
-当 combo = 1 时候的， 调用 report 立即上报错误；<br/>
-当 combo = 0 时候的， 会延迟 delay 毫秒，再合并上报
 <br/>
 #####  延迟上报
 ``` javascript
 BJ_REPORT.push("error msg");
 BJ_REPORT.push({
   msg: "xx load error",
-  url: "http://yourwebsite.com",
-  level: 8
+  target: "xxx.js"
+  combo : 0
 });
 BJ_REPORT.report();
 ```
