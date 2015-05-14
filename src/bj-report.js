@@ -2,7 +2,7 @@
  * @module report
  * @author kael
  * @date @DATE
- * Copyright (c) 2014 kael
+ * Copyright (c) 2014 kael,chriscai
  * Licensed under the MIT license.
  */
 var BJ_REPORT = (function(global) {
