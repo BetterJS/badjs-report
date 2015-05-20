@@ -32,23 +32,35 @@ BJ_Report 是重写了 window.onerror 进行上报的，无需编写任何捕获
 <br/>
 #####  手动上报
 ``` javascript
-BJ_REPORT.report();
 BJ_REPORT.report("error msg");
+
 BJ_REPORT.report({
-  msg: "xx load error",
-  target: "xxx.js"
+  msg: "xx load error",                 // 错误信息
+  target: "xxx.js",                     // 错误的来源js
+  rowNum: 100,                          // 错误的行数
+  colNum: 100,                          // 错误的列数
 });
+
+try{
+    // something throw error ...
+}catch(error){
+    BJ_REPORT.report(e);
+}
 ```
 <br/>
 #####  延迟上报
 ``` javascript
 BJ_REPORT.push("error msg");
+
 BJ_REPORT.push({
-  msg: "xx load error",
-  target: "xxx.js"
-  combo : 0
+  msg: "xx load error",                 // 错误信息
+  target: "xxx.js",                     // 错误的来源js
+  rowNum: 100,                          // 错误的行数
+  colNum: 100,                          // 错误的列数
 });
+
 BJ_REPORT.report();
+
 ```
 当 combo = 1 时候的， 调用 report ，根据缓冲池中的数据一条条上报;<br/>
 当 combo = 0 时候的， 会延迟 delay 毫秒，再合并上报
