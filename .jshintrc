@@ -134,7 +134,7 @@
     // 是否允许逗号出现在行首的换行方式
     "laxcomma": false,
     // 是否允许在循环里定义函数
-    "loopfunc": false,
+    "loopfunc": true,
     // 是否允许多行字符串(原因???)
     "multistr": true,
     // 是否允许在代码中使用__proto__属性(并非所有浏览器支持)

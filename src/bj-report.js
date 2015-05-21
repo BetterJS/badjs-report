@@ -20,7 +20,11 @@ var BJ_REPORT = (function(global) {
         });
 
         _send();
+     /*   if(console && console.error){
+            console.log("[BJ_REPORT]",url +":" + line + ":" + col , msg);
+        }*/
         orgError && orgError.apply(global , arguments);
+
     };
 
     var _config = {
@@ -56,6 +60,10 @@ var BJ_REPORT = (function(global) {
                 }
             }
         }
+
+        //  aa[0]=0&aa[1]=1
+        //  aa:0,aa:1
+        //  aa=0&aa=1
         return [params.join("&"), stringify.join(","), param.join("&")];
     };
 
@@ -92,6 +100,8 @@ var BJ_REPORT = (function(global) {
                 } else {
                     _submit(_config.report + error_str[2] + "&_t=" + (+new Date));
                 }
+
+                _config.onReport && (_config.onReport(_config.id , error ));
             }
         }
 

@@ -4,16 +4,6 @@
         return;
     }
 
-
-    // err must have stack
-    try {
-        throw new Error("testError");
-    } catch (err) {
-        if (!err.stack) {
-            return;
-        }
-    }
-
     var _onthrow = function (errObj) {
         try {
             if (errObj.stack) {
@@ -32,6 +22,7 @@
         } catch (err) {
             root.BJ_REPORT.report(err);
         }
+
     };
 
     var tryJs = root.BJ_REPORT.tryJs = function init(throwCb) {
@@ -61,6 +52,10 @@
                 return foo.apply(this, args || arguments);
             } catch (err) {
                 _onthrow(err);
+                // throw error to parent , hang-up context
+                console && console.log && console.log(["BJ-REPORT"] ,err.stack);
+                throw new Error("badjs hang-up env");
+               // throw err;
             }
         };
     };
@@ -223,6 +218,27 @@
         tryJs.spyJquery().spyModules().spySystem();
         return tryJs;
     };
+
+
+
+    // if notSupport err.stack , return default function
+    try {
+        throw new Error("testError");
+    } catch (err) {
+        if (!err.stack) {
+            for(var key in tryJs) {
+                if (_isFunction(tryJs[key])) {
+                    tryJs[key] = function () {
+                        return tryJs;
+                    };
+                }
+            }
+        }
+    }
+
+
+
+
 
 
 }(window));

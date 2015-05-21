@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>example</title>
     <script src="../src/bj-report.js"></script>
+    <script src="../src/bj-wrap.js"></script>
+    <script src="../node_modules/requirejs/require.js"></script>
 
 </head>
 <body>
@@ -13,11 +15,32 @@
             url: "http://127.0.0.1:8000/badjs"
         });
 
+        BJ_REPORT.tryJs().spyAll();
+
+
+
+        require(["aa.js"] , function (){
+
+        })
+
+
+ /*     var a = function (){
+        b();
+      }
+
+      var b = function (){
+        c();
+      }
+
+      var c = function (){
+            throw "111";
+      }
+
+
+        a();*/
+
 
     </script>
 
-    <script>
-        hehe;
-    </script>
 </body>
 </html>

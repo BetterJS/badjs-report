@@ -8,6 +8,8 @@ npm install badjs-report
 bower install https://github.com/BetterJS/report.git
 ```
 
+
+
 ## Getting Started
 ##### 初始化
 ``` javascript
@@ -26,6 +28,9 @@ BJ_REPORT.init({
   ignore: [/Script Error:/],            // 忽略某个错误
   level: 4, // 设置默认的级别             // 上报等级   // 1-debug 2-info 4-error 8-fail
   target : "xxxx.js"                    //  错误来源的js
+  onReport : function (id , errObj){    // 当上报的时候回调 。 id: 上报的id , errObj : 错误的对象
+
+  }
 });
 ```
 BJ_Report 是重写了 window.onerror 进行上报的，无需编写任何捕获错误的代码
@@ -117,7 +122,23 @@ BJ_REPORT.tryJs().spyAll();
 ```
 
 
+## 更新日志
+##### v1.0.4
+1. spy 插件增加在 异步环境中，抛出异常捕获后，中止浏览器运行
+2. 增加在异步环境中，抛出异常，捕获后，将错误信息输出
+3. 增加onReport 回调
 
+##### v1.0.3
+1. 修复说明文档
+
+##### v1.0.2
+1. 修复 uin 的正则
+
+##### v1.0.1
+1. 增加 spy 插件
+
+##### v1.0.0
+1. 功能上线
 
 
 

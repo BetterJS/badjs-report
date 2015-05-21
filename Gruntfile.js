@@ -3,16 +3,14 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         clean: {
-            dev: ['dist']
+            dist: ['dist'],
+            cleanOther : ['dist/bj-wrap.js']
         },
         uglify: {
             build: {
                 files: [
                     {
-                        expand: true,
-                        cwd: 'dist/',
-                        src: ['**/*.js'],
-                        dest: 'dist/'
+                        'dist/bj-report.min.js' : ["dist/bj-report.js"]
                     }
                 ]
             }
@@ -46,8 +44,8 @@ module.exports = function(grunt) {
                 separator: ';'
             },
             dist : {
-                src: ['src/bj-report.js' , 'src/bj-wrap.js' , 'src/bj-module.js'],
-                dest: 'dist/bj-reportWrap.js'
+                src: ['src/bj-report.js' , 'src/bj-wrap.js'],
+                dest: 'dist/bj-report.js'
 
             }
         },
@@ -81,6 +79,6 @@ module.exports = function(grunt) {
     grunt.registerTask('clear', ['clean']);
     grunt.registerTask('test', ['jshint', 'mocha']);
     grunt.registerTask('dev', ['clean:dev', 'jshint', 'uglify']);
-    grunt.registerTask('build', ['clean', 'jshint', 'copy:dist' ,   'concat:dist'  , 'uglify' ]);
+    grunt.registerTask('build', ['clean:dist', 'jshint', 'copy:dist' ,   'concat:dist', 'clean:cleanOther'  , 'uglify'  ]);
 
 };

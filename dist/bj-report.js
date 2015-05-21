@@ -1,1 +1,422 @@
-var BJ_REPORT=function(a){if(a.BJ_REPORT)return a.BJ_REPORT;var b=[],c=a.onerror;a.onerror=function(d,e,f,g,h){b.push({msg:d,target:e,rowNum:f,colNum:g,error:h}),k(),c&&c.apply(a,arguments)};var d,e={id:0,uin:0,url:"",combo:1,level:4,ignore:[],delay:100,submit:null},f=function(a,b){return Object.prototype.toString.call(a)==="[object "+(b||"Object")+"]"},g=function(a,b){var c=[],d=[],g=[];if(f(a)){a.level=a.level||e.level;for(var h in a){var i=a[h]||"";i&&("object"==typeof i&&(i=JSON.stringify(i)),g.push(h+":"+i),c.push(h+"="+encodeURIComponent(i)),d.push(h+"["+b+"]="+encodeURIComponent(i)))}}return[d.join("&"),g.join(","),c.join("&")]},h=function(a){if(e.submit)e.submit(a);else{var b=new Image;b.src=a}},i=[],j=!1,k=function(){if(e.report){for(;b.length;){for(var a=!1,c=b.shift(),k=g(c,i.length),l=0,m=e.ignore;m>l;l++){var n=e.ignore[l];if(f(n,"RegExp")&&n.test(k[1])||f(n,"Function")&&n(c,k[1])){a=!0;break}}a||(e.combo?i.push(k[0]):h(e.report+k[2]+"&_t="+ +new Date))}if(e.combo){if(j)return;j=!0,d=setTimeout(function(){var a=i.length;h(e.report+i.join("&")+"&count="+a+"&_t="+ +new Date),i=[],j=!1},e.delay)}}},l=!1,m={push:function(a){return b.push(f(a)?a:{msg:a}),m},report:function(a){return a&&m.push(a),k(),m},init:function(a){if(f(a))for(var c in a)e[c]=a[c];var g=parseInt(e.id,10);return g&&(e.report=(e.url||"http://badjs2.qq.com/badjs")+"?id="+g+"&uin="+parseInt(e.uin||(document.cookie.match(/\buin=\D+(\d+)/)||[])[1],10)+"&from="+encodeURIComponent(location.href)+"&",l=!0),b=[],i=[],clearTimeout(d),m}};return m}(window);"undefined"!=typeof exports&&("undefined"!=typeof module&&module.exports&&(exports=module.exports=BJ_REPORT),exports.BJ_REPORT=BJ_REPORT);
+/*!
+ * @module report
+ * @author kael
+ * @date @DATE
+ * Copyright (c) 2014 kael,chriscai
+ * Licensed under the MIT license.
+ */
+var BJ_REPORT = (function(global) {
+    if (global.BJ_REPORT) return global.BJ_REPORT;
+
+    var _error = [];
+    var orgError = global.onerror;
+    global.onerror = function(msg, url, line, col, error) {
+        _error.push({
+            msg: msg,
+            target: url,
+            rowNum : line,
+            colNum : col,
+            error: error
+        });
+
+        _send();
+     /*   if(console && console.error){
+            console.log("[BJ_REPORT]",url +":" + line + ":" + col , msg);
+        }*/
+        orgError && orgError.apply(global , arguments);
+
+    };
+
+    var _config = {
+        id: 0,
+        uin: 0,
+        url: "",
+        combo: 1,
+        level: 4, // 1-debug 2-info 4-error 8-fail
+        ignore: [],
+        delay: 100,
+        submit : null
+    };
+
+    var _isOBJ = function(o, type) {
+        return Object.prototype.toString.call(o) === "[object " + (type || "Object") + "]";
+    };
+
+    var _error_tostring = function(error, index) {
+        var param = [];
+        var params = [];
+        var stringify = [];
+        if (_isOBJ(error)) {
+            error.level = error.level || _config.level;
+            for (var key in error) {
+                var value = error[key] || "";
+                if (value) {
+                    if(typeof value =='object'){
+                        value = JSON.stringify(value);
+                    }
+                    stringify.push(key + ":" + value);
+                    param.push(key + "=" + encodeURIComponent(value));
+                    params.push(key + "[" + index + "]=" + encodeURIComponent(value));
+                }
+            }
+        }
+
+        //  aa[0]=0&aa[1]=1
+        //  aa:0,aa:1
+        //  aa=0&aa=1
+        return [params.join("&"), stringify.join(","), param.join("&")];
+    };
+
+
+
+    var _submit = function (url ){
+        if(_config.submit) {
+            _config.submit(url);
+        }else {
+            var img = new Image();
+            img.src = url;
+        }
+    };
+
+    var error_list = [], comboTimeout = false, comboTimeoutId;
+    var _send = function() {
+        if (!_config.report) return;
+
+        while (_error.length) {
+            var isIgnore = false;
+            var error = _error.shift();
+            var error_str = _error_tostring(error, error_list.length); // JSON.stringify(error);
+            for (var i = 0, l = _config.ignore; i < l; i++) {
+                var rule = _config.ignore[i];
+                if ((_isOBJ(rule, "RegExp") && rule.test(error_str[1])) ||
+                    (_isOBJ(rule, "Function") && rule(error, error_str[1]))) {
+                    isIgnore = true;
+                    break;
+                }
+            }
+            if (!isIgnore) {
+                if (_config.combo) {
+                    error_list.push(error_str[0]);
+                } else {
+                    _submit(_config.report + error_str[2] + "&_t=" + (+new Date));
+                }
+
+                _config.onReport && (_config.onReport(_config.id , error ));
+            }
+        }
+
+        if (_config.combo) {
+            if(comboTimeout){
+                return ;
+            }
+            comboTimeout = true;
+
+            comboTimeoutId = setTimeout(function () {
+                var count = error_list.length;
+                 _submit(_config.report + error_list.join("&") + "&count=" + count + "&_t=" + (+new Date));
+                 error_list = [];
+                 comboTimeout = false;
+             }, _config.delay);
+        }
+
+    };
+
+
+    var _isInited = false;
+    var report =  {
+        push: function(msg) { // 将错误推到缓存池
+            _error.push(_isOBJ(msg) ? msg : {
+                msg: msg
+            });
+            return report;
+        },
+        report: function(msg) { // 立即上报
+            msg && report.push(msg);
+            _send();
+            return report;
+        },
+        init: function(config) { // 初始化
+            if (_isOBJ(config)) {
+                for (var key in config) {
+                    _config[key] = config[key];
+                }
+            }
+            // 没有设置id将不上报
+            var id = parseInt(_config.id, 10);
+            if (id) {
+                _config.report = (_config.url || "http://badjs2.qq.com/badjs")
+                    + "?id=" + id
+                    + "&uin=" + parseInt(_config.uin || (document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10)
+                    + "&from=" + encodeURIComponent(location.href)
+                    + "&";
+                //!_isInited && _run();
+                _isInited = true;
+            }
+
+            _error = [];
+            error_list = [];
+            clearTimeout(comboTimeoutId);
+            return report;
+        }
+    };
+
+
+    return report;
+
+}(window));
+
+
+
+if (typeof exports !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
+        exports = module.exports = BJ_REPORT;
+    }
+    exports.BJ_REPORT = BJ_REPORT;
+}
+;(function (root) {
+
+    if (!root.BJ_REPORT) {
+        return;
+    }
+
+    var _onthrow = function (errObj) {
+        try {
+            if (errObj.stack) {
+                var url = errObj.stack.match('http://[^\n]+')[0];
+                var rowCols = url.match(':([0-9]+):([0-9]+)');
+                var msg = errObj.stack.replace(/\n/gi, '@').replace(/at[\s]/gi, '');
+                root.BJ_REPORT.report({
+                    msg: msg,
+                    rowNum: rowCols[1],
+                    colNum: rowCols[2],
+                    target: url.replace(rowCols[0], '')
+                });
+            } else {
+                root.BJ_REPORT.report(errObj);
+            }
+        } catch (err) {
+            root.BJ_REPORT.report(err);
+        }
+
+    };
+
+    var tryJs = root.BJ_REPORT.tryJs = function init(throwCb) {
+        throwCb && ( _onthrow =throwCb );
+
+
+        return tryJs;
+    };
+
+
+    // merge
+    var _merge = function (org, obj) {
+        var key;
+        for (key in obj) {
+            org[key] = obj[key];
+        }
+    };
+
+    // function or not
+    var _isFunction = function (foo) {
+        return typeof foo === 'function';
+    };
+
+    var cat = function (foo, args) {
+        return function () {
+            try {
+                return foo.apply(this, args || arguments);
+            } catch (err) {
+                _onthrow(err);
+                // throw error to parent , hang-up context
+                console && console.log && console.log(["BJ-REPORT"] ,err.stack);
+                throw new Error("badjs hang-up env");
+               // throw err;
+            }
+        };
+    };
+
+    var catArgs = function (foo) {
+        return function () {
+            var arg, args = [];
+            for (var i = 0, l = arguments.length; i < l; i++) {
+                arg = arguments[i];
+                _isFunction(arg) && (arg = cat(arg));
+                args.push(arg);
+            }
+            return foo.apply(this, args);
+        };
+    };
+
+    var catTimeout = function (foo) {
+        return function (cb, timeout) {
+            // for setTimeout(string, delay)
+            if (typeof cb === 'string') {
+                try {
+                    cb = new Function(cb);
+                } catch (err) {
+                    throw err;
+                }
+            }
+            var args = [].slice.call(arguments, 2);
+            // for setTimeout(function, delay, param1, ...)
+            cb = cat(cb, args.length && args);
+            return foo(cb, timeout);
+        };
+    };
+
+
+    /**
+     * makeArgsTry
+     * wrap a function's arguments with try & catch
+     * @param {Function} foo
+     * @param {Object} self
+     * @returns {Function}
+     */
+    var makeArgsTry = function (foo, self) {
+        return function () {
+            var arg, tmp, args = [];
+            for (var i = 0, l = arguments.length; i < l; i++) {
+                arg = arguments[i];
+                _isFunction(arg) && (tmp = cat(arg)) &&
+                (arg.tryWrap = tmp) && (arg = tmp);
+                args.push(arg);
+            }
+            return foo.apply(self || this, args);
+        };
+    };
+
+    /**
+     * makeObjTry
+     * wrap a object's all value with try & catch
+     * @param {Function} foo
+     * @param {Object} self
+     * @returns {Function}
+     */
+    var makeObjTry = function (obj) {
+        var key, value;
+        for (key in obj) {
+            value = obj[key];
+            if (_isFunction(value)) obj[key] = cat(value);
+        }
+        return obj;
+    };
+
+    /**
+     * wrap jquery async function ,exp : event.add , event.remove , ajax
+     * @returns {Function}
+     */
+    tryJs.spyJquery = function () {
+        var _$ = root.$;
+
+        if (!_$ || !_$.event) {
+            return tryJs;
+        }
+
+        var _add = _$.event.add,
+            _ajax = _$.ajax,
+            _remove = _$.event.remove;
+
+        if (_add) {
+            _$.event.add = makeArgsTry(_add);
+            _$.event.remove = function () {
+                var arg, args = [];
+                for (var i = 0, l = arguments.length; i < l; i++) {
+                    arg = arguments[i];
+                    _isFunction(arg) && (arg = arg.tryWrap);
+                    args.push(arg);
+                }
+                return _remove.apply(this, args);
+            };
+        }
+
+        if (_ajax) {
+            _$.ajax = function (url, setting) {
+                if (!setting) {
+                    setting = url;
+                    url = undefined;
+                }
+                makeObjTry(setting);
+                if (url) return _ajax.call(_$, url, setting);
+                return _ajax.call(_$, setting);
+            };
+        }
+
+        return tryJs;
+    };
+
+
+    /**
+     * wrap amd or commonjs of function  ,exp :  define , require ,
+     * @returns {Function}
+     */
+    tryJs.spyModules = function () {
+        var _require = root.require,
+            _define = root.define;
+        if (_require && _define) {
+            root.require = catArgs(_require);
+            _merge(root.require, _require);
+            root.define = catArgs(_define);
+            _merge(root.define, _define);
+        }
+        return tryJs;
+    };
+
+    /**
+     * wrap async of function in window , exp : setTimeout , setInterval
+     * @returns {Function}
+     */
+    tryJs.spySystem = function () {
+        root.setTimeout = catTimeout(root.setTimeout);
+        root.setInterval = catTimeout(root.setInterval);
+        return tryJs;
+    };
+
+
+    /**
+     * wrap custom of function ,
+     * @param obj - obj or  function
+     * @returns {Function}
+     */
+    tryJs.spyCustom = function (obj) {
+        if (_isFunction(obj)) {
+            return cat(obj);
+        } else {
+            return makeObjTry(obj);
+        }
+    };
+
+    /**
+     * run spyJquery() and spyModules() and spySystem()
+     * @returns {Function}
+     */
+    tryJs.spyAll = function () {
+        tryJs.spyJquery().spyModules().spySystem();
+        return tryJs;
+    };
+
+
+
+    // if notSupport err.stack , return default function
+    try {
+        throw new Error("testError");
+    } catch (err) {
+        if (!err.stack) {
+            for(var key in tryJs) {
+                if (_isFunction(tryJs[key])) {
+                    tryJs[key] = function () {
+                        return tryJs;
+                    };
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+}(window));
+
+
+

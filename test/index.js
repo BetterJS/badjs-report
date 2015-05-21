@@ -106,6 +106,27 @@ define(['../src/bj-report.js' , '../src/bj-wrap.js'], function(report) {
             BJ_REPORT.report("errorTest4");
         });
 
+
+        it('onReport callback ', function(done) {
+
+            var count = 0 ;
+            BJ_REPORT.init({
+                id : 1 ,
+                url : "http://test.qq.com/report",
+                combo:1,
+                delay : 200,
+                submit : function (url){
+                    count ++ ;
+                    should.equal( count , 2);
+                    done();
+                },
+                onReport : function (){
+                    count ++ ;
+                }
+            });
+            BJ_REPORT.report("errorTest4");
+        });
+
     });
 
 
@@ -129,34 +150,50 @@ define(['../src/bj-report.js' , '../src/bj-wrap.js'], function(report) {
                     done();
                 }
             }).
-                tryJs().spyCustom(spyCustomFun );
 
-            spyCustomFun();
+            tryJs().spyCustom(spyCustomFun );
+
+            (function (){
+                spyCustomFun();
+            }).should.throw()
+
+
 
         });
 
 
         it('spyAll', function (done , err) {
 
-            define("testDefine", function(){
-                throw "testDefine";
-            })
 
-            BJ_REPORT.init({
-                id: 1,
-                url: "http://test.qq.com/report",
-                combo: 1,
-                delay: 200,
-                submit: function (url) {
-                    var match1 = url.indexOf("testDefine");
-                    should.not.equal( match1 , -1);
-                    done();
+            var _cb ;
+            window.define = function (name , cb){
+                if(_cb){
+                    _cb();
+                }else {
+                    _cb = cb;
                 }
-            }).
-                tryJs().spyAll();
+            }
 
-            require(["testDefine"] , function (){});
+                BJ_REPORT.init({
+                    id: 1,
+                    url: "http://test.qq.com/report",
+                    combo: 1,
+                    delay: 200,
+                    submit: function (url) {
+                        var match1 = url.indexOf("testDefine");
+                        should.not.equal(match1, -1);
+                        done();
+                    }
+                }).
+                    tryJs().spyAll();
 
+                define("testDefine", function () {
+                    throw "testDefine";
+                });
+
+                (function () {
+                    define();
+                }).should.throw()
         });
     })
 });
