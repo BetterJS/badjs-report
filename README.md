@@ -76,24 +76,24 @@ BJ_REPORT.init({id: 1}).push("error msg").report("error msg 2");
 ### 高级用法
 >script error  的错误，怎么解决？
 
-由于 BJ_Report 只是重写了onerror 方法而已，而且浏览器的跨域问题不能获得外链 javascript 的错误，所以使用tryjs  进行包裹。
+由于 BJ_Report 只是重写了onerror 方法而已，而且浏览器的跨域问题不能获得外链 javascript 的错误，所以使用tryJs  进行包裹。
 #### 包裹jquery
 ``` javascript
-BJ_REPORT.tryjs().spyJquery();
+BJ_REPORT.tryJs().spyJquery();
 ```
 包裹 jquery 的 event.add , event.remove , event.ajax 这几个异步方法。
 <br/>
 <br/>
 #### 包裹 define , require
 ``` javascript
-BJ_REPORT.tryjs().spyModules();
+BJ_REPORT.tryJs().spyModules();
 ```
 包裹 模块化框架 的 define , require 方法
 <br/>
 <br/>
 #### 包裹  js 默认的方法
 ``` javascript
-BJ_REPORT.tryjs().spySystem();
+BJ_REPORT.tryJs().spySystem();
 ```
 包裹 js 的 setTimeout , setInterval 方法
 <br/>
@@ -101,11 +101,11 @@ BJ_REPORT.tryjs().spySystem();
 #### 包裹 自定义的方法
 ``` javascript
 var customFunction = function (){};
-customFunction  = BJ_REPORT.tryjs().spyCustom(customFunction );
+customFunction  = BJ_REPORT.tryJs().spyCustom(customFunction );
 
 // 只会包裹 customOne  , customTwo
 var customObject = { customOne : function (){} , customTwo : function (){} , customVar : 1}
-BJ_REPORT.tryjs().spyCustom(customObject );
+BJ_REPORT.tryJs().spyCustom(customObject );
 ```
 包裹 自定义的方法或则对象
 <br/>
@@ -113,7 +113,7 @@ BJ_REPORT.tryjs().spyCustom(customObject );
 #### 运行所有默认的包裹
 ``` javascript
 //自动运行 SpyJquery , SpyModule , SpySystem
-BJ_REPORT.tryjs().spyAll();
+BJ_REPORT.tryJs().spyAll();
 ```
 
 
