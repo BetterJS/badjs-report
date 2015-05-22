@@ -1,3 +1,2 @@
-define( [],function (e){
-    bbb
+define( ["bb.js"],function (e){
 });

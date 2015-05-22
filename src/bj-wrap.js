@@ -177,9 +177,12 @@
     tryJs.spyModules = function () {
         var _require = root.require,
             _define = root.define;
-        if (_require && _define) {
+        if (_require) {
             root.require = catArgs(_require);
             _merge(root.require, _require);
+        }
+
+        if (_define) {
             root.define = catArgs(_define);
             _merge(root.define, _define);
         }

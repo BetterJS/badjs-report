@@ -86,7 +86,7 @@ var BJ_REPORT = (function(global) {
             var isIgnore = false;
             var error = _error.shift();
             var error_str = _error_tostring(error, error_list.length); // JSON.stringify(error);
-            for (var i = 0, l = _config.ignore; i < l; i++) {
+            for (var i = 0, l = _config.ignore.length; i < l; i++) {
                 var rule = _config.ignore[i];
                 if ((_isOBJ(rule, "RegExp") && rule.test(error_str[1])) ||
                     (_isOBJ(rule, "Function") && rule(error, error_str[1]))) {
@@ -151,8 +151,8 @@ var BJ_REPORT = (function(global) {
                     + "&";
                 //!_isInited && _run();
                 _isInited = true;
+                _config.ignore.push(/badjs hang-up env/gi);
             }
-
             _error = [];
             error_list = [];
             clearTimeout(comboTimeoutId);
