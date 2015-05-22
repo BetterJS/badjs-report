@@ -127,6 +127,71 @@ define(['../src/bj-report.js' , '../src/bj-wrap.js'], function(report) {
             BJ_REPORT.report("errorTest4");
         });
 
+
+        it('ignore report1 ', function(done) {
+
+            var count = 0 ;
+            BJ_REPORT.init({
+                id : 1 ,
+                url : "http://test.qq.com/report",
+                combo:1,
+                delay : 200,
+                ignore : [
+                    /ignore/gi ,
+                    function (error , str){
+
+                        if(str.indexOf("ignore2") >= 0){
+                            return true;
+                        }else {
+                            false;
+                        }
+
+                    }],
+                submit : function (url){
+                    should.equal( count , 1);
+                    done();
+                    BJ_REPORT.init({ignore : []});
+                },
+                onReport : function (){
+                    count ++ ;
+                }
+            });
+            BJ_REPORT.report("ignore");
+            BJ_REPORT.report("pass");
+            BJ_REPORT.report("ignore2");
+        });
+
+
+        it('ignore report2 ', function(done) {
+            var count = 0 ;
+            BJ_REPORT.init({
+                id : 1 ,
+                url : "http://test.qq.com/report",
+                combo:1,
+                delay : 200,
+                ignore : [
+                    /ignore/gi ,
+                    function (error , str){
+                        if(str.indexOf("ignore2") >= 0){
+                            return true;
+                        }else {
+                            false
+                        }
+
+                    }],
+                submit : function (url){
+                    should.equal( count , 3);
+                    done();
+                    BJ_REPORT.init({ignore : []});
+                },
+                onReport : function (){
+                    count ++ ;
+                }
+            });
+            BJ_REPORT.report("pass");
+            BJ_REPORT.report("pass");
+            BJ_REPORT.report("pass");
+        });
     });
 
 
@@ -156,15 +221,10 @@ define(['../src/bj-report.js' , '../src/bj-wrap.js'], function(report) {
             (function (){
                 spyCustomFun();
             }).should.throw()
-
-
-
         });
 
 
         it('spyAll', function (done , err) {
-
-
             var _cb ;
             window.define = function (name , cb){
                 if(_cb){

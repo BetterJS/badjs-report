@@ -11,6 +11,10 @@ var BJ_REPORT = (function(global) {
     var _error = [];
     var orgError = global.onerror;
     global.onerror = function(msg, url, line, col, error) {
+        // ignore report
+        if(error && error.ignore){
+            return
+        }
         _error.push({
             msg: msg,
             target: url,
@@ -151,7 +155,6 @@ var BJ_REPORT = (function(global) {
                     + "&";
                 //!_isInited && _run();
                 _isInited = true;
-                _config.ignore.push(/badjs hang-up env/gi);
             }
             _error = [];
             error_list = [];

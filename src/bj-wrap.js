@@ -51,11 +51,18 @@
             try {
                 return foo.apply(this, args || arguments);
             } catch (err) {
-                _onthrow(err);
-                // throw error to parent , hang-up context
-                console && console.log && console.log(["BJ-REPORT"] ,err.stack);
-                throw new Error("badjs hang-up env");
-               // throw err;
+                //w3c
+                if(!window.attachEvent){
+                    //get stack of err , and report
+                    _onthrow(err);
+                    var error = new Error(err);
+                    error.ignore = true;
+                    // hang up browser ，and throw , but it should trigger onerror ,assign value of ignore for onerror will ignore report
+                    throw err;
+                }else { // ie , throw err for onerror ,
+                    throw err;
+                }
+
             }
         };
     };
@@ -222,22 +229,6 @@
         return tryJs;
     };
 
-
-
-    // if notSupport err.stack , return default function
-    try {
-        throw new Error("testError");
-    } catch (err) {
-        if (!err.stack) {
-            for(var key in tryJs) {
-                if (_isFunction(tryJs[key])) {
-                    tryJs[key] = function () {
-                        return tryJs;
-                    };
-                }
-            }
-        }
-    }
 
 
 

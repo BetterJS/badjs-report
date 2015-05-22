@@ -1,6 +1,3 @@
 
-require(["aa.js"] , function (){
-setTimeout(function (){
-    aaaa
-},0)
+require(["http://aaaa.com/report/example/aa.js"] , function (){
 })
