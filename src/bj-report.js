@@ -11,10 +11,6 @@ var BJ_REPORT = (function(global) {
     var _error = [];
     var orgError = global.onerror;
     global.onerror = function(msg, url, line, col, error) {
-        // ignore report
-        if(error && error.ignore){
-            return
-        }
         _error.push({
             msg: msg,
             target: url,
@@ -24,9 +20,6 @@ var BJ_REPORT = (function(global) {
         });
 
         _send();
-     /*   if(console && console.error){
-            console.log("[BJ_REPORT]",url +":" + line + ":" + col , msg);
-        }*/
         orgError && orgError.apply(global , arguments);
 
     };

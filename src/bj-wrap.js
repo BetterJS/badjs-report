@@ -51,18 +51,26 @@
             try {
                 return foo.apply(this, args || arguments);
             } catch (err) {
-                //w3c
-                if(!window.attachEvent){
-                    //get stack of err , and report
-                    _onthrow(err);
-                    var error = new Error(err);
-                    error.ignore = true;
-                    // hang up browser ，and throw , but it should trigger onerror ,assign value of ignore for onerror will ignore report
-                    throw err;
-                }else { // ie , throw err for onerror ,
-                    throw err;
-                }
+                try {
+                    return foo.apply(this, args || arguments);
+                } catch (error) {
 
+                    _onthrow(error);
+
+                    //some browser throw error (chrome) , can not find error where it throw,  so print it on console;
+                    if( error.stack && console && console.error){
+                        console.error("[BJ-REPORT]" , err.stack);
+                    }
+
+                    // hang up browser and throw , but it should trigger onerror , so rewrite onerror then recover it
+                    var orgOnerror = root.onerror;
+                    root.onerror = function (){};
+                    setTimeout(function(){
+                        root.onerror = orgOnerror;
+                    },50);
+
+                    throw error;
+                }
             }
         };
     };
@@ -184,15 +192,33 @@
     tryJs.spyModules = function () {
         var _require = root.require,
             _define = root.define;
-        if (_require) {
+        if (_define.amd && _require) {
             root.require = catArgs(_require);
             _merge(root.require, _require);
-        }
-
-        if (_define) {
             root.define = catArgs(_define);
             _merge(root.define, _define);
         }
+
+        if ( root.seajs && _define ) {
+            root.define =  function () {
+                var arg, args = [];
+                for (var i = 0, l = arguments.length; i < l; i++) {
+                    arg = arguments[i];
+                    if(_isFunction(arg)){
+                        arg = cat(arg);
+                        //seajs should use toString parse dependencies , so rewrite it
+                        arg.toString =(function (orgArg){
+                            return function (){
+                                return  orgArg.toString();
+                            };
+                        }(arguments[i]));
+                    }
+                    args.push(arg);
+                }
+                return _define.apply(this, args);
+            };
+        }
+
         return tryJs;
     };
 

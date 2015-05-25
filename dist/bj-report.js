@@ -20,9 +20,6 @@ var BJ_REPORT = (function(global) {
         });
 
         _send();
-     /*   if(console && console.error){
-            console.log("[BJ_REPORT]",url +":" + line + ":" + col , msg);
-        }*/
         orgError && orgError.apply(global , arguments);
 
     };
@@ -151,7 +148,6 @@ var BJ_REPORT = (function(global) {
                     + "&";
                 //!_isInited && _run();
                 _isInited = true;
-                _config.ignore.push(/badjs hang-up env/gi);
             }
             _error = [];
             error_list = [];
@@ -226,11 +222,26 @@ if (typeof exports !== 'undefined') {
             try {
                 return foo.apply(this, args || arguments);
             } catch (err) {
-                _onthrow(err);
-                // throw error to parent , hang-up context
-                console && console.log && console.log(["BJ-REPORT"] ,err.stack);
-                throw new Error("badjs hang-up env");
-               // throw err;
+                try {
+                    return foo.apply(this, args || arguments);
+                } catch (error) {
+
+                    _onthrow(error);
+
+                    //some browser throw error (chrome) , can not find error where it throw,  so print it on console;
+                    if( error.stack && console && console.error){
+                        console.error("[BJ-REPORT]" , err.stack);
+                    }
+
+                    // hang up browser and throw , but it should trigger onerror , so rewrite onerror then recover it
+                    var orgOnerror = root.onerror;
+                    root.onerror = function (){};
+                    setTimeout(function(){
+                        root.onerror = orgOnerror;
+                    },50);
+
+                    throw error;
+                }
             }
         };
     };
@@ -352,15 +363,33 @@ if (typeof exports !== 'undefined') {
     tryJs.spyModules = function () {
         var _require = root.require,
             _define = root.define;
-        if (_require) {
+        if (_define.amd && _require) {
             root.require = catArgs(_require);
             _merge(root.require, _require);
-        }
-
-        if (_define) {
             root.define = catArgs(_define);
             _merge(root.define, _define);
         }
+
+        if ( root.seajs && _define ) {
+            root.define =  function () {
+                var arg, args = [];
+                for (var i = 0, l = arguments.length; i < l; i++) {
+                    arg = arguments[i];
+                    if(_isFunction(arg)){
+                        arg = cat(arg);
+                        //seajs should use toString parse dependencies , so rewrite it
+                        arg.toString =(function (orgArg){
+                            return function (){
+                                return  orgArg.toString();
+                            };
+                        }(arguments[i]));
+                    }
+                    args.push(arg);
+                }
+                return _define.apply(this, args);
+            };
+        }
+
         return tryJs;
     };
 
@@ -397,22 +426,6 @@ if (typeof exports !== 'undefined') {
         return tryJs;
     };
 
-
-
-    // if notSupport err.stack , return default function
-    try {
-        throw new Error("testError");
-    } catch (err) {
-        if (!err.stack) {
-            for(var key in tryJs) {
-                if (_isFunction(tryJs[key])) {
-                    tryJs[key] = function () {
-                        return tryJs;
-                    };
-                }
-            }
-        }
-    }
 
 
 
