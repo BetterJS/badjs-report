@@ -80,7 +80,7 @@ var BJ_REPORT = (function(global) {
 
     var error_list = [];
     var comboTimeout = 0;
-    var _send = function() {
+    var _send = function(isReoprtNow) {
         if (!_config.report) return;
 
         while (_error.length) {
@@ -105,12 +105,20 @@ var BJ_REPORT = (function(global) {
             }
         }
 
-        if (_config.combo && !comboTimeout) {
-            comboTimeout = setTimeout(function() {
-                _submit(_config.report + error_list.join("&") + "&count=" + error_list.length + "&_t=" + (+new Date));
+        // 合并上报
+        var count = error_list.length;
+        if (count) {
+            var comboReport = function(){
+                _submit(_config.report + error_list.join("&") + "&count=" + count + "&_t=" + (+new Date));
                 comboTimeout = 0;
                 error_list = [];
-            }, _config.delay);
+            };
+
+            if (isReoprtNow) {
+                comboReport(); // 立即上报
+            } else if (!comboTimeout) {
+                comboTimeout = setTimeout(comboReport, _config.delay); // 延迟上报
+            }
         }
     };
 
@@ -119,11 +127,11 @@ var BJ_REPORT = (function(global) {
             _error.push(_isOBJ(msg) ? msg : {
                 msg: msg
             });
-            _send();
             return report;
         },
         report: function(msg) { // 立即上报
             msg && report.push(msg);
+            _send(true);
             return report;
         },
         init: function(config) { // 初始化
