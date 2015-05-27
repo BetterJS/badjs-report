@@ -7,14 +7,20 @@
     var _onthrow = function (errObj) {
         try {
             if (errObj.stack) {
-                var url = errObj.stack.match('http://[^\n]+')[0];
+                var url = errObj.stack.match('http://[^\n]+');
+                url = url ? url[0] : "";
                 var rowCols = url.match(':([0-9]+):([0-9]+)');
-                var msg = errObj.stack.replace(/\n/gi, '@').replace(/at[\s]/gi, '');
+                if(!rowCols ){
+                    rowCols= [0 , 0 ,0];
+                }
+
+                var stack = errObj.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@");
                 root.BJ_REPORT.report({
-                    msg: msg,
+                    msg: stack,
                     rowNum: rowCols[1],
                     colNum: rowCols[2],
                     target: url.replace(rowCols[0], '')
+                   /* stack : stack*/
                 });
             } else {
                 root.BJ_REPORT.report(errObj);

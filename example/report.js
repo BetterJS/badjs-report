@@ -1,3 +1,3 @@
 
-require(["http://aaaa.com/report/example/aa.js"] , function (){
+require(["aa.js"] , function (){
 })

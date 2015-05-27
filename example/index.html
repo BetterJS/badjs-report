@@ -12,7 +12,7 @@
     <script>
         BJ_REPORT.init({
             id: 1,
-            url: "http://127.0.0.1:8000/badjs"
+            url: "http://127.0.0.1/badjs"
         });
 
         BJ_REPORT.tryJs().spyAll();
@@ -20,8 +20,7 @@
 
 
 
-
- /*     var a = function (){
+      var a = function (){
         b();
       }
 
@@ -30,12 +29,11 @@
       }
 
       var c = function (){
-            throw "111";
+            throw new Error("111");
       }
 
 
-        a();*/
-
+        a();
 
     </script>
     <script src="report.js"></script>

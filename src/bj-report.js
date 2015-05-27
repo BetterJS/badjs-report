@@ -11,12 +11,18 @@ var BJ_REPORT = (function(global) {
     var _error = [];
     var orgError = global.onerror;
     global.onerror = function(msg, url, line, col, error) {
+        var msg = msg;
+
+        if(error && error.stack){
+            msg = error.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@")
+        }
+
         _error.push({
             msg: msg,
             target: url,
             rowNum: line,
-            colNum: col,
-            error: error
+            colNum: col
+           /* stack : stack*/
         });
 
         _send();
@@ -51,7 +57,7 @@ var BJ_REPORT = (function(global) {
                         try {
                             value = JSON.stringify(value);
                         } catch (err) {
-                            value = "<detect by report> " + err.message;
+                            value = "[BJ_REPORT detect value stringify error] " + err;
                         }
                     }
                     stringify.push(key + ":" + value);
@@ -146,7 +152,10 @@ var BJ_REPORT = (function(global) {
                 _config.report = (_config.url || "http://badjs2.qq.com/badjs") + "?id=" + id + "&uin=" + parseInt(_config.uin || (document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10) + "&from=" + encodeURIComponent(location.href) + "&";
             }
             return report;
-        }
+        },
+
+        __onerror__ : global.onerror
+
     };
 
     return report;

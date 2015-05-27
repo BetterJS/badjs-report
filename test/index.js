@@ -54,6 +54,7 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             BJ_REPORT.push("errorTest1");
             BJ_REPORT.push("errorTest2");
             BJ_REPORT.report("errorTest3");
+            BJ_REPORT.report("errorTest3");
         });
 
         it('combo report , use push and report ', function(done) {
@@ -81,6 +82,29 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             BJ_REPORT.push("errorTest2");
             BJ_REPORT.push("errorTest3");
             BJ_REPORT.report("errorTest4");
+        });
+
+
+        it('combo report , onerror and report ', function(done) {
+
+            var count = 0;
+            BJ_REPORT.init({
+                id: 1,
+                url: "http://test.qq.com/report",
+                combo: 1,
+                delay: 200,
+                submit: function(url) {
+                    count ++ ;
+
+                }
+            });
+            BJ_REPORT.__onerror__("msg" , 0 , 0, null);
+            BJ_REPORT.report();
+
+            setTimeout(function (){
+                should.equal(count, 1);
+                done();
+            },500);
         });
 
 
