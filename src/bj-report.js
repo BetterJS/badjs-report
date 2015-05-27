@@ -21,8 +21,8 @@ var BJ_REPORT = (function(global) {
             msg: newmsg,
             target: url,
             rowNum: line,
-            colNum: col,
-            error : error
+            colNum: col
+            /*error : error*/
            /* stack : stack*/
         });
 
