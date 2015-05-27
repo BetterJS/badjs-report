@@ -21,8 +21,8 @@ var BJ_REPORT = (function(global) {
             msg: newmsg,
             target: url,
             rowNum: line,
-            colNum: col,
-            error : error
+            colNum: col
+            /*error : error*/
            /* stack : stack*/
         });
 
@@ -369,7 +369,7 @@ if (typeof exports !== 'undefined') {
     tryJs.spyModules = function () {
         var _require = root.require,
             _define = root.define;
-        if (_define.amd && _require) {
+        if (_define && _define.amd && _require) {
             root.require = catArgs(_require);
             _merge(root.require, _require);
             root.define = catArgs(_define);
