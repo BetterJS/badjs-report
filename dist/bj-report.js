@@ -11,17 +11,23 @@ var BJ_REPORT = (function(global) {
     var _error = [];
     var orgError = global.onerror;
     global.onerror = function(msg, url, line, col, error) {
+        var newmsg = msg;
+
+        if(error && error.stack){
+            newmsg = error.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@");
+        }
+
         _error.push({
-            msg: msg,
+            msg: newmsg,
             target: url,
-            rowNum : line,
-            colNum : col,
-            error: error
+            rowNum: line,
+            colNum: col,
+            error : error
+           /* stack : stack*/
         });
 
         _send();
-        orgError && orgError.apply(global , arguments);
-
+        orgError && orgError.apply(global, arguments);
     };
 
     var _config = {
@@ -32,7 +38,7 @@ var BJ_REPORT = (function(global) {
         level: 4, // 1-debug 2-info 4-error 8-fail
         ignore: [],
         delay: 100,
-        submit : null
+        submit: null
     };
 
     var _isOBJ = function(o, type) {
@@ -48,8 +54,12 @@ var BJ_REPORT = (function(global) {
             for (var key in error) {
                 var value = error[key] || "";
                 if (value) {
-                    if(typeof value =='object'){
-                        value = JSON.stringify(value);
+                    if (_isOBJ(value)) {
+                        try {
+                            value = JSON.stringify(value);
+                        } catch (err) {
+                            value = "[BJ_REPORT detect value stringify error] " + err.toString();
+                        }
                     }
                     stringify.push(key + ":" + value);
                     param.push(key + "=" + encodeURIComponent(value));
@@ -58,31 +68,32 @@ var BJ_REPORT = (function(global) {
             }
         }
 
-        //  aa[0]=0&aa[1]=1
-        //  aa:0,aa:1
-        //  aa=0&aa=1
+        // msg[0]=msg&target[0]=target -- combo report
+        // msg:msg,target:target -- ignore
+        // msg=msg&target=target -- report with out combo
         return [params.join("&"), stringify.join(","), param.join("&")];
     };
 
-
-
-    var _submit = function (url ){
-        if(_config.submit) {
+    var _imgs = [];
+    var _submit = function(url) {
+        if (_config.submit) {
             _config.submit(url);
-        }else {
-            var img = new Image();
-            img.src = url;
+        } else {
+            var _img = new Image();
+            _imgs.push(_img);
+            _img.src = url;
         }
     };
 
-    var error_list = [], comboTimeout = false, comboTimeoutId;
-    var _send = function() {
+    var error_list = [];
+    var comboTimeout = 0;
+    var _send = function(isReoprtNow) {
         if (!_config.report) return;
 
         while (_error.length) {
             var isIgnore = false;
             var error = _error.shift();
-            var error_str = _error_tostring(error, error_list.length); // JSON.stringify(error);
+            var error_str = _error_tostring(error, error_list.length);
             for (var i = 0, l = _config.ignore.length; i < l; i++) {
                 var rule = _config.ignore[i];
                 if ((_isOBJ(rule, "RegExp") && rule.test(error_str[1])) ||
@@ -97,30 +108,29 @@ var BJ_REPORT = (function(global) {
                 } else {
                     _submit(_config.report + error_str[2] + "&_t=" + (+new Date));
                 }
-
-                _config.onReport && (_config.onReport(_config.id , error ));
+                _config.onReport && (_config.onReport(_config.id, error));
             }
         }
 
-        if (_config.combo) {
-            if(comboTimeout){
-                return ;
+        // 合并上报
+        var count = error_list.length;
+        if (count) {
+            var comboReport = function(){
+                clearTimeout(comboTimeout);
+                _submit(_config.report + error_list.join("&") + "&count=" + count + "&_t=" + (+new Date));
+                comboTimeout = 0;
+                error_list = [];
+            };
+
+            if (isReoprtNow) {
+                comboReport(); // 立即上报
+            } else if (!comboTimeout) {
+                comboTimeout = setTimeout(comboReport, _config.delay); // 延迟上报
             }
-            comboTimeout = true;
-
-            comboTimeoutId = setTimeout(function () {
-                var count = error_list.length;
-                 _submit(_config.report + error_list.join("&") + "&count=" + count + "&_t=" + (+new Date));
-                 error_list = [];
-                 comboTimeout = false;
-             }, _config.delay);
         }
-
     };
 
-
-    var _isInited = false;
-    var report =  {
+    var report = {
         push: function(msg) { // 将错误推到缓存池
             _error.push(_isOBJ(msg) ? msg : {
                 msg: msg
@@ -129,7 +139,7 @@ var BJ_REPORT = (function(global) {
         },
         report: function(msg) { // 立即上报
             msg && report.push(msg);
-            _send();
+            _send(true);
             return report;
         },
         init: function(config) { // 初始化
@@ -141,27 +151,17 @@ var BJ_REPORT = (function(global) {
             // 没有设置id将不上报
             var id = parseInt(_config.id, 10);
             if (id) {
-                _config.report = (_config.url || "http://badjs2.qq.com/badjs")
-                    + "?id=" + id
-                    + "&uin=" + parseInt(_config.uin || (document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10)
-                    + "&from=" + encodeURIComponent(location.href)
-                    + "&";
-                //!_isInited && _run();
-                _isInited = true;
+                _config.report = (_config.url || "http://badjs2.qq.com/badjs") + "?id=" + id + "&uin=" + parseInt(_config.uin || (document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10) + "&from=" + encodeURIComponent(location.href) + "&";
             }
-            _error = [];
-            error_list = [];
-            clearTimeout(comboTimeoutId);
             return report;
-        }
+        },
+
+        __onerror__ : global.onerror
+
     };
 
-
     return report;
-
 }(window));
-
-
 
 if (typeof exports !== 'undefined') {
     if (typeof module !== 'undefined' && module.exports) {
@@ -178,20 +178,26 @@ if (typeof exports !== 'undefined') {
     var _onthrow = function (errObj) {
         try {
             if (errObj.stack) {
-                var url = errObj.stack.match('http://[^\n]+')[0];
+                var url = errObj.stack.match('http://[^\n]+');
+                url = url ? url[0] : "";
                 var rowCols = url.match(':([0-9]+):([0-9]+)');
-                var msg = errObj.stack.replace(/\n/gi, '@').replace(/at[\s]/gi, '');
+                if(!rowCols ){
+                    rowCols= [0 , 0 ,0];
+                }
+
+                var stack = errObj.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@");
                 root.BJ_REPORT.report({
-                    msg: msg,
+                    msg: stack,
                     rowNum: rowCols[1],
                     colNum: rowCols[2],
                     target: url.replace(rowCols[0], '')
+                   /* stack : stack*/
                 });
             } else {
                 root.BJ_REPORT.report(errObj);
             }
         } catch (err) {
-            root.BJ_REPORT.report(err);
+            root.BJ_REPORT.report(errObj);
         }
 
     };

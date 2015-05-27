@@ -26,7 +26,7 @@
                 root.BJ_REPORT.report(errObj);
             }
         } catch (err) {
-            root.BJ_REPORT.report(err);
+            root.BJ_REPORT.report(errObj);
         }
 
     };

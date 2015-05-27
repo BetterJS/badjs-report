@@ -11,17 +11,18 @@ var BJ_REPORT = (function(global) {
     var _error = [];
     var orgError = global.onerror;
     global.onerror = function(msg, url, line, col, error) {
-        var msg = msg;
+        var newmsg = msg;
 
         if(error && error.stack){
-            msg = error.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@")
+            newmsg = error.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@");
         }
 
         _error.push({
-            msg: msg,
+            msg: newmsg,
             target: url,
             rowNum: line,
-            colNum: col
+            colNum: col,
+            error : error
            /* stack : stack*/
         });
 
@@ -57,7 +58,7 @@ var BJ_REPORT = (function(global) {
                         try {
                             value = JSON.stringify(value);
                         } catch (err) {
-                            value = "[BJ_REPORT detect value stringify error] " + err;
+                            value = "[BJ_REPORT detect value stringify error] " + err.toString();
                         }
                     }
                     stringify.push(key + ":" + value);
@@ -115,6 +116,7 @@ var BJ_REPORT = (function(global) {
         var count = error_list.length;
         if (count) {
             var comboReport = function(){
+                clearTimeout(comboTimeout);
                 _submit(_config.report + error_list.join("&") + "&count=" + count + "&_t=" + (+new Date));
                 comboTimeout = 0;
                 error_list = [];
