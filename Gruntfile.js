@@ -11,7 +11,10 @@ module.exports = function(grunt) {
                 files: [
                     {
                         'dist/bj-report.min.js' : ["dist/bj-report.js"]
-                    }
+                    },
+                    {
+                        'dist/bj-report-tryjs.min.js' : ["dist/bj-report-tryjs.js"]
+                    },
                 ]
             }
         },
@@ -45,7 +48,7 @@ module.exports = function(grunt) {
             },
             dist : {
                 src: ['src/bj-report.js' , 'src/bj-wrap.js'],
-                dest: 'dist/bj-report.js'
+                dest: 'dist/bj-report-tryjs.js'
 
             }
         },
