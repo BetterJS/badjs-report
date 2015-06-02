@@ -14,7 +14,7 @@ var BJ_REPORT = (function(global) {
         var newmsg = msg;
 
         if(error && error.stack){
-            newmsg = error.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@");
+            newmsg = error.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@").replace(/\?[^:]+/gi , "");
         }
 
         _error.push({

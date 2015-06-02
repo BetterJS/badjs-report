@@ -1,3 +1,3 @@
-define( ["bb.js"],function (e){
+define( ["bb.js?bbb"],function (e){
     aaaa
 });

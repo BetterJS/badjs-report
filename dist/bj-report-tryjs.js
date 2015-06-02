@@ -14,7 +14,7 @@ var BJ_REPORT = (function(global) {
         var newmsg = msg;
 
         if(error && error.stack){
-            newmsg = error.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@");
+            newmsg = error.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@").replace(/\?[^:]+/gi , "");
         }
 
         _error.push({
@@ -185,7 +185,7 @@ if (typeof exports !== 'undefined') {
                     rowCols= [0 , 0 ,0];
                 }
 
-                var stack = errObj.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@");
+                var stack = errObj.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@").replace(/\?[^:]+/gi , "");
                 root.BJ_REPORT.report({
                     msg: stack,
                     rowNum: rowCols[1],

@@ -1,3 +1,3 @@
 
-require(["aa.js"] , function (){
+require(["aa.js?bbbb"] , function (){
 })
