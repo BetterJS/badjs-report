@@ -14,7 +14,7 @@
                     rowCols= [0 , 0 ,0];
                 }
 
-                var stack = errObj.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@").replace(/\?[^:]+/gi , "");
+                var stack =  root.BJ_REPORT._processStackMsg(errObj);
                 root.BJ_REPORT.report({
                     msg: stack,
                     rowNum: rowCols[1],

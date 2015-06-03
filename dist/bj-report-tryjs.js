@@ -11,14 +11,14 @@ var BJ_REPORT = (function(global) {
     var _error = [];
     var orgError = global.onerror;
     global.onerror = function(msg, url, line, col, error) {
-        var newmsg = msg;
+        var newMsg = msg;
 
         if(error && error.stack){
-            newmsg = error.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@").replace(/\?[^:]+/gi , "");
+            newMsg = report._processStackMsg(error);
         }
 
         _error.push({
-            msg: newmsg,
+            msg: newMsg,
             target: url,
             rowNum: line,
             colNum: col
@@ -156,7 +156,19 @@ var BJ_REPORT = (function(global) {
             return report;
         },
 
-        __onerror__ : global.onerror
+        __onerror__ : global.onerror,
+
+
+        _processStackMsg : function ( error){
+            var stack = error.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@").replace(/\?[^:]+/gi , "");
+            var msg = error.toString();
+            if(stack.indexOf(msg) <0){
+                stack = msg +"@" + stack;
+            }
+            return stack;
+        }
+
+
 
     };
 
@@ -185,7 +197,7 @@ if (typeof exports !== 'undefined') {
                     rowCols= [0 , 0 ,0];
                 }
 
-                var stack = errObj.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@").replace(/\?[^:]+/gi , "");
+                var stack =  root.BJ_REPORT._processStackMsg(errObj);
                 root.BJ_REPORT.report({
                     msg: stack,
                     rowNum: rowCols[1],
