@@ -26,7 +26,7 @@ BJ_REPORT.init({
   delay:100, 							// 当 combo= 1 可用，延迟多少毫秒，合并缓冲区中的上报
   url: "http://badjs2.qq.com/badjs",    // 指定上报地址
   ignore: [/Script Error:/],            // 忽略某个错误
-  level: 4, // 设置默认的级别             // 上报等级   // 1-debug 2-info 4-error 8-fail
+  level: 4, // 设置默认的级别             // 上报等级   // 1-debug 2-info 4-error 
   target : "xxxx.js"                    //  错误来源的js
   onReport : function (id , errObj){    // 当上报的时候回调 。 id: 上报的id , errObj : 错误的对象
 
