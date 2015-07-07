@@ -135,6 +135,7 @@ var BJ_REPORT = (function(global) {
             _error.push(_isOBJ(msg) ? msg : {
                 msg: msg
             });
+            _send();
             return report;
         },
         report: function(msg) { // 立即上报
