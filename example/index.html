@@ -1,4 +1,4 @@
-<!doctype html>
+<!Doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -12,7 +12,8 @@
     <script>
         BJ_REPORT.init({
             id: 1,
-            url: "http://test.aa.com/badjs"
+            url: "http://test.aa.com/badjs",
+            ext : {mmid :555}
         });
 
         BJ_REPORT.tryJs().spyAll();
@@ -20,7 +21,7 @@
 
 
 
-      /*var a = function (){
+      var a = function (){
         b();
       }
 
@@ -33,10 +34,12 @@
       }
 
 
-        a();*/
+        a();
+
+        aa
 
     </script>
     <!--<script src="http://ccc.qq.com/report.js"></script>-->
-<img src="ssss" onerror="function (){window.onerror.apply(this,arguments)}">
+<!--<img src="ssss" onerror="window.onerror.apply(this, arguments);">-->
 </body>
 </html>

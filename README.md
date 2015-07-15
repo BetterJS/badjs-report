@@ -26,9 +26,10 @@ BJ_REPORT.init({
   delay:100, 							// 当 combo= 1 可用，延迟多少毫秒，合并缓冲区中的上报
   url: "http://badjs2.qq.com/badjs",    // 指定上报地址
   ignore: [/Script Error:/],            // 忽略某个错误
-  level: 4, // 设置默认的级别             // 上报等级   // 1-debug 2-info 4-error 
+  level: 4, // 设置默认的级别             // 上报等级   // 1-debug 2-info 4-error
   target : "xxxx.js"                    //  错误来源的js
   onReport : function (id , errObj){    // 当上报的时候回调 。 id: 上报的id , errObj : 错误的对象
+  ext : {}                              // 扩展属性，后端做扩展处理属性。例如：存在 msid 就会分发到 monitor.server.com
 
   }
 });
@@ -123,6 +124,11 @@ BJ_REPORT.tryJs().spyAll();
 
 
 ## update log
+##### v1.1.1
+1. seajs 兼容的BUG修复
+2. 增加 ext 属性，用户可以自己定义里面的值上报
+
+
 ##### v1.1.0
 1. 增加对seajs 模块化的包裹
 2. 增加对IE下面的错误的上报
