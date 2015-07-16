@@ -17,13 +17,13 @@ var BJ_REPORT = (function(global) {
             newMsg = report._processStackMsg(error);
         }
 
-        _error.push({
+        report.push({
             msg: newMsg,
             target: url,
             rowNum: line,
             colNum: col
             /*error : error*/
-           /* stack : stack*/
+            /* stack : stack*/
         });
 
         _send();
@@ -38,6 +38,7 @@ var BJ_REPORT = (function(global) {
         ext: {},
         level: 4, // 1-debug 2-info 4-error 8-fail
         ignore: [],
+        random : 1,
         delay: 100,
         submit: null
     };
@@ -133,6 +134,9 @@ var BJ_REPORT = (function(global) {
 
     var report = {
         push: function(msg) { // 将错误推到缓存池
+            if(Math.random() >= _config.random){
+                return report;
+            }
             _error.push(_isOBJ(msg) ? msg : {
                 msg: msg
             });
