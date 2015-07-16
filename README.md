@@ -125,7 +125,7 @@ BJ_REPORT.tryJs().spyAll();
 
 
 ## update log
-##### v1.1.1
+##### v1.1.2
 1. 增加抽样参数 random
 
 ##### v1.1.1
