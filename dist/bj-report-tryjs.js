@@ -17,13 +17,13 @@ var BJ_REPORT = (function(global) {
             newMsg = report._processStackMsg(error);
         }
 
-        _error.push({
+        report.push({
             msg: newMsg,
             target: url,
             rowNum: line,
             colNum: col
             /*error : error*/
-           /* stack : stack*/
+            /* stack : stack*/
         });
 
         _send();
@@ -38,6 +38,7 @@ var BJ_REPORT = (function(global) {
         ext: {},
         level: 4, // 1-debug 2-info 4-error 8-fail
         ignore: [],
+        random : 1,
         delay: 100,
         submit: null
     };
@@ -133,6 +134,9 @@ var BJ_REPORT = (function(global) {
 
     var report = {
         push: function(msg) { // 将错误推到缓存池
+            if(Math.random() >= _config.random){
+                return report;
+            }
             _error.push(_isOBJ(msg) ? msg : {
                 msg: msg
             });
@@ -241,16 +245,13 @@ if (typeof exports !== 'undefined') {
         return function () {
             try {
                 return foo.apply(this, args || arguments);
-            } catch (err) {
-                try {
-                    return foo.apply(this, args || arguments);
-                } catch (error) {
+            } catch (error) {
 
                     _onthrow(error);
 
                     //some browser throw error (chrome) , can not find error where it throw,  so print it on console;
                     if( error.stack && console && console.error){
-                        console.error("[BJ-REPORT]" , err.stack);
+                        console.error("[BJ-REPORT]" , error.stack);
                     }
 
                     // hang up browser and throw , but it should trigger onerror , so rewrite onerror then recover it
@@ -261,7 +262,6 @@ if (typeof exports !== 'undefined') {
                     },50);
 
                     throw error;
-                }
             }
         };
     };
