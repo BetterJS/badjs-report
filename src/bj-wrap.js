@@ -56,16 +56,13 @@
         return function () {
             try {
                 return foo.apply(this, args || arguments);
-            } catch (err) {
-                try {
-                    return foo.apply(this, args || arguments);
-                } catch (error) {
+            } catch (error) {
 
                     _onthrow(error);
 
                     //some browser throw error (chrome) , can not find error where it throw,  so print it on console;
                     if( error.stack && console && console.error){
-                        console.error("[BJ-REPORT]" , err.stack);
+                        console.error("[BJ-REPORT]" , error.stack);
                     }
 
                     // hang up browser and throw , but it should trigger onerror , so rewrite onerror then recover it
@@ -76,7 +73,6 @@
                     },50);
 
                     throw error;
-                }
             }
         };
     };

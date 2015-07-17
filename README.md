@@ -25,7 +25,7 @@ BJ_REPORT.init({
   combo:0,								// combo 是否合并上报， 0 关闭， 1 启动（默认）
   delay:100, 							// 当 combo= 1 可用，延迟多少毫秒，合并缓冲区中的上报
   url: "http://badjs2.qq.com/badjs",    // 指定上报地址
-  ignore: [/Script Error:/],            // 忽略某个错误
+  ignore: [/Script error/i],            // 忽略某个错误
   level: 4, // 设置默认的级别             // 上报等级   // 1-debug 2-info 4-error
   target : "xxxx.js"                    //  错误来源的js
   random : 1                            // 抽样上报，1~0 之间数值，  1为100%上报
@@ -125,6 +125,10 @@ BJ_REPORT.tryJs().spyAll();
 
 
 ## update log
+
+##### v1.1.3
+1. bugfix
+
 ##### v1.1.2
 1. 增加抽样参数 random
 
