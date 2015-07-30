@@ -23,7 +23,7 @@ BJ_REPORT.init({
   id: 1,                                // 不指定id将不上报
   uin: 123,                             // 指定用户 number , 默认已经读取 qq uin
   combo:0,								// combo 是否合并上报， 0 关闭， 1 启动（默认）
-  delay:100, 							// 当 combo= 1 可用，延迟多少毫秒，合并缓冲区中的上报
+  delay:1000, 							// 当 combo= 1 可用，延迟多少毫秒，合并缓冲区中的上报
   url: "http://badjs2.qq.com/badjs",    // 指定上报地址
   ignore: [/Script error/i],            // 忽略某个错误
   level: 4, // 设置默认的级别             // 上报等级   // 1-debug 2-info 4-error
@@ -125,6 +125,10 @@ BJ_REPORT.tryJs().spyAll();
 
 
 ## update log
+##### v1.1.4
+1. 增加info 和 debug 接口
+2. report 增加对 error 对象处理
+3. 处理 [Object event] 问题
 
 ##### v1.1.3
 1. bugfix

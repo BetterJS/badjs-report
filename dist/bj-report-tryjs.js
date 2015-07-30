@@ -14,7 +14,11 @@ var BJ_REPORT = (function(global) {
         var newMsg = msg;
 
         if(error && error.stack){
-            newMsg = report._processStackMsg(error);
+            newMsg = _processStackMsg(error);
+        }
+
+        if(_isOBJByType(newMsg , "Event")){
+            newMsg += newMsg.type?('--'+newMsg.type +'--' + (newMsg.target ? (newMsg.target.tagName + "--" + newMsg.target.src):"")) : "";
         }
 
         report.push({
@@ -39,12 +43,53 @@ var BJ_REPORT = (function(global) {
         level: 4, // 1-debug 2-info 4-error 8-fail
         ignore: [],
         random : 1,
-        delay: 100,
+        delay: 1000,
         submit: null
     };
 
-    var _isOBJ = function(o, type) {
+    var _isOBJByType = function(o, type) {
         return Object.prototype.toString.call(o) === "[object " + (type || "Object") + "]";
+    };
+
+    var _isOBJ = function(obj) {
+        var type = typeof obj;
+        return  type === 'object' && !!obj;
+    };
+
+
+    var _processError  = function ( errObj){
+        try {
+            if (errObj.stack) {
+                var url = errObj.stack.match('http://[^\n]+');
+                url = url ? url[0] : "";
+                var rowCols = url.match(':([0-9]+):([0-9]+)');
+                if(!rowCols ){
+                    rowCols= [0 , 0 ,0];
+                }
+
+                var stack =  _processStackMsg(errObj);
+                return {
+                    msg: stack,
+                    rowNum: rowCols[1],
+                    colNum: rowCols[2],
+                    target: url.replace(rowCols[0], '')
+                    /* stack : stack*/
+                };
+            } else {
+                return errObj;
+            }
+        } catch (err) {
+            return errObj;
+        }
+    };
+
+    var _processStackMsg  = function ( error){
+        var stack = error.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@").replace(/\?[^:]+/gi , "");
+        var msg = error.toString();
+        if(stack.indexOf(msg) <0){
+            stack = msg +"@" + stack;
+        }
+        return stack;
     };
 
     var _error_tostring = function(error, index) {
@@ -98,8 +143,8 @@ var BJ_REPORT = (function(global) {
             var error_str = _error_tostring(error, error_list.length);
             for (var i = 0, l = _config.ignore.length; i < l; i++) {
                 var rule = _config.ignore[i];
-                if ((_isOBJ(rule, "RegExp") && rule.test(error_str[1])) ||
-                    (_isOBJ(rule, "Function") && rule(error, error_str[1]))) {
+                if ((_isOBJByType(rule, "RegExp") && rule.test(error_str[1])) ||
+                    (_isOBJByType(rule, "Function") && rule(error, error_str[1]))) {
                     isIgnore = true;
                     break;
                 }
@@ -137,15 +182,39 @@ var BJ_REPORT = (function(global) {
             if(Math.random() >= _config.random){
                 return report;
             }
-            _error.push(_isOBJ(msg) ? msg : {
+            _error.push(_isOBJ(msg) ? _processError(msg) : {
                 msg: msg
             });
             _send();
             return report;
         },
-        report: function(msg) { // 立即上报
+        report: function(msg) { // error report
             msg && report.push(msg);
             _send(true);
+            return report;
+        },
+        info: function(msg) { // info report
+            if(!msg){
+                return report;
+            }
+            if(_isOBJ(msg)){
+                msg.level = 2;
+            }else {
+                msg = {msg : msg , level :2};
+            }
+            report.push(msg);
+            return report;
+        },
+        debug: function(msg) { // debug report
+            if(!msg){
+                return report;
+            }
+            if(_isOBJ(msg)){
+                msg.level = 1;
+            }else {
+                msg = {msg : msg , level :1};
+            }
+            report.push(msg);
             return report;
         },
         init: function(config) { // 初始化
@@ -162,18 +231,7 @@ var BJ_REPORT = (function(global) {
             return report;
         },
 
-        __onerror__ : global.onerror,
-
-
-        _processStackMsg : function ( error){
-            var stack = error.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0,5).join("@").replace(/\?[^:]+/gi , "");
-            var msg = error.toString();
-            if(stack.indexOf(msg) <0){
-                stack = msg +"@" + stack;
-            }
-            return stack;
-        }
-
+        __onerror__ : global.onerror
 
 
     };
@@ -194,36 +252,11 @@ if (typeof exports !== 'undefined') {
     }
 
     var _onthrow = function (errObj) {
-        try {
-            if (errObj.stack) {
-                var url = errObj.stack.match('http://[^\n]+');
-                url = url ? url[0] : "";
-                var rowCols = url.match(':([0-9]+):([0-9]+)');
-                if(!rowCols ){
-                    rowCols= [0 , 0 ,0];
-                }
-
-                var stack =  root.BJ_REPORT._processStackMsg(errObj);
-                root.BJ_REPORT.report({
-                    msg: stack,
-                    rowNum: rowCols[1],
-                    colNum: rowCols[2],
-                    target: url.replace(rowCols[0], '')
-                   /* stack : stack*/
-                });
-            } else {
-                root.BJ_REPORT.report(errObj);
-            }
-        } catch (err) {
-            root.BJ_REPORT.report(errObj);
-        }
-
+        root.BJ_REPORT.report(errObj);
     };
 
     var tryJs = root.BJ_REPORT.tryJs = function init(throwCb) {
         throwCb && ( _onthrow =throwCb );
-
-
         return tryJs;
     };
 

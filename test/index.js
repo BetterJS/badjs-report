@@ -20,6 +20,36 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
         });
 
 
+        it('one info , not combo  ', function(done) {
+            BJ_REPORT.init({
+                id: 1,
+                url: "http://test.qq.com/report",
+                combo: 0,
+                submit: function(url) {
+                    should.not.equal(url.indexOf("errorTest"), -1);
+                    should.equal(url.indexOf("level=2") > -1, true);
+                    done();
+                }
+            });
+            BJ_REPORT.info("errorTest");
+        });
+
+
+        it('one debug , not combo  ', function(done) {
+            BJ_REPORT.init({
+                id: 1,
+                url: "http://test.qq.com/report",
+                combo: 0,
+                submit: function(url) {
+                    should.not.equal(url.indexOf("errorTest"), -1);
+                    should.equal(url.indexOf("level=1") > -1, true);
+                    done();
+                }
+            });
+            BJ_REPORT.debug("errorTest");
+        });
+
+
         it('three report , not combo  ', function(done) {
             var count = 3;
             BJ_REPORT.init({
@@ -194,6 +224,29 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             BJ_REPORT.push("pass");
             BJ_REPORT.report("pass");
         });
+
+
+        it('report Error Event', function(done, err) {
+
+            BJ_REPORT.init({
+                id: 1,
+                url: "http://test.qq.com/report",
+                combo: 1,
+                delay: 200,
+                submit: function(url) {
+                    var match1 =  url.indexOf("ReferenceError");
+                    should.not.equal(match1, -1);
+                    done();
+                }
+            }).tryJs().spyAll();
+
+            try{
+                error111
+            }catch(e){
+                BJ_REPORT.report(e);
+            }
+
+        });
     });
 
 
@@ -259,5 +312,8 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
                 define();
             }).should.throw();
         });
+
+
+
     });
 });

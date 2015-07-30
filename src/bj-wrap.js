@@ -5,36 +5,11 @@
     }
 
     var _onthrow = function (errObj) {
-        try {
-            if (errObj.stack) {
-                var url = errObj.stack.match('http://[^\n]+');
-                url = url ? url[0] : "";
-                var rowCols = url.match(':([0-9]+):([0-9]+)');
-                if(!rowCols ){
-                    rowCols= [0 , 0 ,0];
-                }
-
-                var stack =  root.BJ_REPORT._processStackMsg(errObj);
-                root.BJ_REPORT.report({
-                    msg: stack,
-                    rowNum: rowCols[1],
-                    colNum: rowCols[2],
-                    target: url.replace(rowCols[0], '')
-                   /* stack : stack*/
-                });
-            } else {
-                root.BJ_REPORT.report(errObj);
-            }
-        } catch (err) {
-            root.BJ_REPORT.report(errObj);
-        }
-
+        root.BJ_REPORT.report(errObj);
     };
 
     var tryJs = root.BJ_REPORT.tryJs = function init(throwCb) {
         throwCb && ( _onthrow =throwCb );
-
-
         return tryJs;
     };
 
