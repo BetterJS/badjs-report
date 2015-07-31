@@ -77,7 +77,7 @@ BJ_REPORT.report();
 ``` javascript
 BJ_REPORT.init({id: 1}).push("error msg").report("error msg 2");
 ```
-
+<br/>
 #####  info 上报
 ``` javascript
 BJ_REPORT.info("info"); // 用户记录日志
