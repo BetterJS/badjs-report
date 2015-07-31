@@ -72,17 +72,16 @@ BJ_REPORT.report();
 当 combo = 1 时候的， 调用 report ，根据缓冲池中的数据一条条上报;<br/>
 当 combo = 0 时候的， 会延迟 delay 毫秒，再合并上报
 <br/>
-
 #####  可以链式调用
 ``` javascript
 BJ_REPORT.init({id: 1}).push("error msg").report("error msg 2");
 ```
-<br/>
+
 #####  info 上报
 ``` javascript
 BJ_REPORT.info("info"); // 用户记录日志
 ```
-<br/>
+
 #####  debug 上报
 ``` javascript
 BJ_REPORT.debug("debug");  //可以结合实时上报，跟踪问题
