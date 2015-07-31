@@ -18,7 +18,7 @@ var BJ_REPORT = (function(global) {
         }
 
         if(_isOBJByType(newMsg , "Event")){
-            newMsg += newMsg.type?('--'+newMsg.type +'--' + (newMsg.target ? (newMsg.target.tagName + "--" + newMsg.target.src):"")) : "";
+            newMsg += newMsg.type?('--'+newMsg.type +'--' + (newMsg.target ? (newMsg.target.tagName + "::" + newMsg.target.src):"")) : "";
         }
 
         report.push({
