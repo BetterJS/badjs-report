@@ -89,7 +89,7 @@ BJ_REPORT.debug("debug");  //可以结合实时上报，跟踪问题
 <br/>
 <br/>
 ### 高级用法
->script error  的错误，怎么解决？
+>script error  的错误，怎么解决？  [#3](https://github.com/BetterJS/badjs-report/issues/3) 
 
 由于 BJ_Report 只是重写了onerror 方法而已，而且浏览器的跨域问题不能获得外链 javascript 的错误，所以使用tryJs  进行包裹。
 #### 包裹jquery
