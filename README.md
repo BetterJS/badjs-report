@@ -11,6 +11,8 @@ bower install https://github.com/BetterJS/report.git
 
 
 ## Getting Started
+> badjs-report 必须在所有类库之前加载并初始化。
+
 ##### 初始化
 ``` javascript
 BJ_REPORT.init({
