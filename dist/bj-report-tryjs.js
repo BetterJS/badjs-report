@@ -278,6 +278,8 @@ if (typeof exports !== 'undefined') {
         return typeof foo === 'function';
     };
 
+    var timeoutkey ;
+
     var cat = function (foo, args) {
         return function () {
             try {
@@ -292,12 +294,14 @@ if (typeof exports !== 'undefined') {
                     }
 
                     // hang up browser and throw , but it should trigger onerror , so rewrite onerror then recover it
-                    var orgOnerror = root.onerror;
-                    root.onerror = function (){};
-                    setTimeout(function(){
-                        root.onerror = orgOnerror;
-                    },50);
-
+                    if(!timeoutkey){
+                        var orgOnerror = root.onerror;
+                        root.onerror = function (){};
+                        timeoutkey = setTimeout(function(){
+                            root.onerror = orgOnerror;
+                            timeoutkey = null;
+                        },50);
+                    }
                     throw error;
             }
         };
