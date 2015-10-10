@@ -4,50 +4,43 @@ module.exports = function(grunt) {
     grunt.initConfig({
         clean: {
             dist: ['dist'],
-            cleanOther : ['dist/bj-wrap.js']
+            cleanOther: ['dist/bj-wrap.js']
         },
         uglify: {
             build: {
-                files: [
-                    {
-                        'dist/bj-report.min.js' : ["dist/bj-report.js"]
-                    },
-                    {
-                        'dist/bj-report-tryjs.min.js' : ["dist/bj-report-tryjs.js"]
-                    },
-                ]
+                files: [{
+                    'dist/bj-report.min.js': ["dist/bj-report.js"]
+                }, {
+                    'dist/bj-report-tryjs.min.js': ["dist/bj-report-tryjs.js"]
+                }, ]
             }
         },
         copy: {
             dist: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: 'src/',
-                        src: ['**/*.js'],
-                        dest: 'dist/'
-                    }
-                ]
+                files: [{
+                    expand: true,
+                    cwd: 'src/',
+                    src: ['**/*.js'],
+                    dest: 'dist/'
+                }]
             }
         },
         cssmin: {
             dist: {
-                files: [
-                    {
-                        expand: true,
-                        cwd: 'src/',
-                        src: ['**/*.css'],
-                        dest: 'dist/'
-                    }
-                ]
+                files: [{
+                    expand: true,
+                    cwd: 'src/',
+                    src: ['**/*.css'],
+                    dest: 'dist/'
+                }]
             }
         },
-        concat : {
+        concat: {
             options: {
                 separator: ';'
             },
-            dist : {
-                src: ['src/bj-report.js' , 'src/bj-wrap.js'],
+            dist: {
+                src: ['src/bj-report.js', 'src/bj-wrap.js'],
                 dest: 'dist/bj-report-tryjs.js'
 
             }
@@ -82,6 +75,6 @@ module.exports = function(grunt) {
     grunt.registerTask('clear', ['clean']);
     grunt.registerTask('test', ['jshint', 'mocha']);
     grunt.registerTask('dev', ['clean:dev', 'jshint', 'uglify']);
-    grunt.registerTask('build', ['clean:dist', 'jshint', 'copy:dist' ,   'concat:dist', 'clean:cleanOther'  , 'uglify'  ]);
+    grunt.registerTask('build', ['clean:dist', 'jshint', 'copy:dist', 'concat:dist', 'clean:cleanOther', 'uglify']);
 
 };

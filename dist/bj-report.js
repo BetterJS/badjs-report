@@ -1,37 +1,14 @@
 /*!
  * @module report
- * @author kael
+ * @author kael, chriscai
  * @date @DATE
- * Copyright (c) 2014 kael,chriscai
+ * Copyright (c) 2014 kael, chriscai
  * Licensed under the MIT license.
  */
 var BJ_REPORT = (function(global) {
     if (global.BJ_REPORT) return global.BJ_REPORT;
 
     var _error = [];
-    var orgError = global.onerror;
-    global.onerror = function(msg, url, line, col, error) {
-        var newMsg = msg;
-
-        if (error && error.stack) {
-            newMsg = _processStackMsg(error);
-        }
-
-        if (_isOBJByType(newMsg, "Event")) {
-            newMsg += newMsg.type ? ('--' + newMsg.type + '--' + (newMsg.target ? (newMsg.target.tagName + "::" + newMsg.target.src) : "")) : "";
-        }
-
-        report.push({
-            msg: newMsg,
-            target: url,
-            rowNum: line,
-            colNum: col
-        });
-
-        _send();
-        orgError && orgError.apply(global, arguments);
-    };
-
     var _config = {
         id: 0,
         uin: 0,
@@ -51,16 +28,39 @@ var BJ_REPORT = (function(global) {
 
     var _isOBJ = function(obj) {
         var type = typeof obj;
-        return type === 'object' && !!obj;
+        return type === "object" && !!obj;
     };
 
+    var orgError = global.onerror;
+    // rewrite window.oerror
+    global.onerror = function(msg, url, line, col, error) {
+        var newMsg = msg;
+
+        if (error && error.stack) {
+            newMsg = _processStackMsg(error);
+        }
+
+        if (_isOBJByType(newMsg, "Event")) {
+            newMsg += newMsg.type ? ("--" + newMsg.type + "--" + (newMsg.target ? (newMsg.target.tagName + "::" + newMsg.target.src) : "")) : "";
+        }
+
+        report.push({
+            msg: newMsg,
+            target: url,
+            rowNum: line,
+            colNum: col
+        });
+
+        _send();
+        orgError && orgError.apply(global, arguments);
+    };
 
     var _processError = function(errObj) {
         try {
             if (errObj.stack) {
-                var url = errObj.stack.match('http://[^\n]+');
+                var url = errObj.stack.match("http://[^\n]+");
                 url = url ? url[0] : "";
-                var rowCols = url.match(':([0-9]+):([0-9]+)');
+                var rowCols = url.match(":([0-9]+):([0-9]+)");
                 if (!rowCols) {
                     rowCols = [0, 0, 0];
                 }
@@ -70,8 +70,7 @@ var BJ_REPORT = (function(global) {
                     msg: stack,
                     rowNum: rowCols[1],
                     colNum: rowCols[2],
-                    target: url.replace(rowCols[0], '')
-                        /* stack : stack*/
+                    target: url.replace(rowCols[0], "")
                 };
             } else {
                 return errObj;
@@ -82,7 +81,7 @@ var BJ_REPORT = (function(global) {
     };
 
     var _processStackMsg = function(error) {
-        var stack = error.stack.replace(/\n/gi, '').split(/\bat\b/).slice(0, 5).join("@").replace(/\?[^:]+/gi, "");
+        var stack = error.stack.replace(/\n/gi, "").split(/\bat\b/).slice(0, 5).join("@").replace(/\?[^:]+/gi, "");
         var msg = error.toString();
         if (stack.indexOf(msg) < 0) {
             stack = msg + "@" + stack;
@@ -139,12 +138,14 @@ var BJ_REPORT = (function(global) {
             var isIgnore = false;
             var error = _error.shift();
             var error_str = _error_tostring(error, error_list.length);
-            for (var i = 0, l = _config.ignore.length; i < l; i++) {
-                var rule = _config.ignore[i];
-                if ((_isOBJByType(rule, "RegExp") && rule.test(error_str[1])) ||
-                    (_isOBJByType(rule, "Function") && rule(error, error_str[1]))) {
-                    isIgnore = true;
-                    break;
+            if (_isOBJByType(_config.ignore, "Array")) {
+                for (var i = 0, l = _config.ignore.length; i < l; i++) {
+                    var rule = _config.ignore[i];
+                    if ((_isOBJByType(rule, "RegExp") && rule.test(error_str[1])) ||
+                        (_isOBJByType(rule, "Function") && rule(error, error_str[1]))) {
+                        isIgnore = true;
+                        break;
+                    }
                 }
             }
             if (!isIgnore) {
@@ -236,15 +237,14 @@ var BJ_REPORT = (function(global) {
         },
 
         __onerror__: global.onerror
-
-
     };
 
     return report;
+
 }(window));
 
-if (typeof exports !== 'undefined') {
-    if (typeof module !== 'undefined' && module.exports) {
+if (typeof exports !== "undefined") {
+    if (typeof module !== "undefined" && module.exports) {
         exports = module.exports = BJ_REPORT;
     }
     exports.BJ_REPORT = BJ_REPORT;
