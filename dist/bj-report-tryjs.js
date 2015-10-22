@@ -239,6 +239,12 @@ var BJ_REPORT = (function(global) {
         __onerror__: global.onerror
     };
 
+    typeof console !== "undefined" && console.error && setTimeout(function(){
+        console.error("BJ_ERROR", decodeURIComponent(((location.hash || '')
+                .match(/([#&])BJ_ERROR=([^&$]+)/) || [])[2]).replace(/(:\d+:\d+)\s*/g, '$1\n'));
+    }, 0);
+
+
     return report;
 
 }(window));
