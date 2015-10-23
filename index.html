@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Badjs-report by BetterJS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Badjs-report</h1>
+      <h2 class="project-tagline">monitor error and report </h2>
+      <a href="https://github.com/BetterJS/badjs-report" class="btn">View on GitHub</a>
+      <a href="https://github.com/BetterJS/badjs-report/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/BetterJS/badjs-report/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="bj_report" class="anchor" href="#bj_report" aria-hidden="true"><span class="octicon octicon-link"></span></a>BJ_REPORT</h1>
+
+<h1>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h1>
+
+<div class="highlight highlight-source-js"><pre>npm install badjs<span class="pl-k">-</span>report</pre></div>
+
+<div class="highlight highlight-source-js"><pre>bower install https<span class="pl-k">:</span><span class="pl-c">//github.com/BetterJS/report.git</span></pre></div>
+
+<h2>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<blockquote>
+<p>badjs-report 必须在所有类库之前加载并初始化。</p>
+</blockquote>
+
+<h5>
+<a id="初始化" class="anchor" href="#%E5%88%9D%E5%A7%8B%E5%8C%96" aria-hidden="true"><span class="octicon octicon-link"></span></a>初始化</h5>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">BJ_REPORT</span>.init({
+  id<span class="pl-k">:</span> <span class="pl-c1">1</span>                                   <span class="pl-c">// 不指定id将不上报</span>
+});</pre></div>
+
+<h5>
+<a id="配置说明" class="anchor" href="#%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E" aria-hidden="true"><span class="octicon octicon-link"></span></a>配置说明</h5>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">BJ_REPORT</span>.init({
+  id<span class="pl-k">:</span> <span class="pl-c1">1</span>,                                <span class="pl-c">// 不指定id将不上报</span>
+  uin<span class="pl-k">:</span> <span class="pl-c1">123</span>,                             <span class="pl-c">// 指定用户 number , 默认已经读取 qq uin</span>
+  combo<span class="pl-k">:</span><span class="pl-c1">0</span>,                              <span class="pl-c">// combo 是否合并上报， 0 关闭， 1 启动（默认）</span>
+  delay<span class="pl-k">:</span><span class="pl-c1">1000</span>,                           <span class="pl-c">// 当 combo= 1 可用，延迟多少毫秒，合并缓冲区中的上报</span>
+  url<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>http://badjs2.qq.com/badjs<span class="pl-pds">"</span></span>,    <span class="pl-c">// 指定上报地址</span>
+  ignore<span class="pl-k">:</span> [<span class="pl-sr"><span class="pl-pds">/</span>Script error<span class="pl-pds">/</span>i</span>],            <span class="pl-c">// 忽略某个错误</span>
+  level<span class="pl-k">:</span> <span class="pl-c1">4</span>, <span class="pl-c">// 设置默认的级别             // 上报等级   // 1-debug 2-info 4-error</span>
+  target <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>xxxx.js<span class="pl-pds">"</span></span>                    <span class="pl-c">//  错误来源的js</span>
+  random <span class="pl-k">:</span> <span class="pl-c1">1</span>                            <span class="pl-c">// 抽样上报，1~0 之间数值，  1为100%上报</span>
+  <span class="pl-en">onReport</span> <span class="pl-k">:</span> <span class="pl-k">function</span> (<span class="pl-smi">id</span> , <span class="pl-smi">errObj</span>){    <span class="pl-c">// 当上报的时候回调 。 id: 上报的id , errObj : 错误的对象</span>
+  ext <span class="pl-k">:</span> {}                              <span class="pl-c">// 扩展属性，后端做扩展处理属性。例如：存在 msid 就会分发到 monitor.server.com</span>
+
+  }
+});</pre></div>
+
+<p>BJ_Report 是重写了 window.onerror 进行上报的，无需编写任何捕获错误的代码
+<br></p>
+
+<h5>
+<a id="手动上报" class="anchor" href="#%E6%89%8B%E5%8A%A8%E4%B8%8A%E6%8A%A5" aria-hidden="true"><span class="octicon octicon-link"></span></a>手动上报</h5>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">BJ_REPORT</span>.report(<span class="pl-s"><span class="pl-pds">"</span>error msg<span class="pl-pds">"</span></span>);
+
+<span class="pl-c1">BJ_REPORT</span>.report({
+  msg<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>xx load error<span class="pl-pds">"</span></span>,                 <span class="pl-c">// 错误信息</span>
+  target<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>xxx.js<span class="pl-pds">"</span></span>,                     <span class="pl-c">// 错误的来源js</span>
+  rowNum<span class="pl-k">:</span> <span class="pl-c1">100</span>,                          <span class="pl-c">// 错误的行数</span>
+  colNum<span class="pl-k">:</span> <span class="pl-c1">100</span>,                          <span class="pl-c">// 错误的列数</span>
+});
+
+<span class="pl-k">try</span>{
+    <span class="pl-c">// something throw error ...</span>
+}<span class="pl-k">catch</span>(error){
+    <span class="pl-c1">BJ_REPORT</span>.report(e);
+}</pre></div>
+
+<p><br></p>
+
+<h5>
+<a id="延迟上报" class="anchor" href="#%E5%BB%B6%E8%BF%9F%E4%B8%8A%E6%8A%A5" aria-hidden="true"><span class="octicon octicon-link"></span></a>延迟上报</h5>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">BJ_REPORT</span>.<span class="pl-c1">push</span>(<span class="pl-s"><span class="pl-pds">"</span>error msg<span class="pl-pds">"</span></span>);
+
+<span class="pl-c1">BJ_REPORT</span>.<span class="pl-c1">push</span>({
+  msg<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>xx load error<span class="pl-pds">"</span></span>,                 <span class="pl-c">// 错误信息</span>
+  target<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>xxx.js<span class="pl-pds">"</span></span>,                     <span class="pl-c">// 错误的来源js</span>
+  rowNum<span class="pl-k">:</span> <span class="pl-c1">100</span>,                          <span class="pl-c">// 错误的行数</span>
+  colNum<span class="pl-k">:</span> <span class="pl-c1">100</span>,                          <span class="pl-c">// 错误的列数</span>
+});
+
+<span class="pl-c1">BJ_REPORT</span>.report();
+</pre></div>
+
+<p>当 combo = 1 时候的， 调用 report ，根据缓冲池中的数据一条条上报;<br>
+当 combo = 0 时候的， 会延迟 delay 毫秒，再合并上报
+<br></p>
+
+<h5>
+<a id="可以链式调用" class="anchor" href="#%E5%8F%AF%E4%BB%A5%E9%93%BE%E5%BC%8F%E8%B0%83%E7%94%A8" aria-hidden="true"><span class="octicon octicon-link"></span></a>可以链式调用</h5>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">BJ_REPORT</span>.init({id<span class="pl-k">:</span> <span class="pl-c1">1</span>}).<span class="pl-c1">push</span>(<span class="pl-s"><span class="pl-pds">"</span>error msg<span class="pl-pds">"</span></span>).report(<span class="pl-s"><span class="pl-pds">"</span>error msg 2<span class="pl-pds">"</span></span>);</pre></div>
+
+<h5>
+<a id="info-上报" class="anchor" href="#info-%E4%B8%8A%E6%8A%A5" aria-hidden="true"><span class="octicon octicon-link"></span></a>info 上报</h5>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">BJ_REPORT</span>.<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">"</span>info<span class="pl-pds">"</span></span>); <span class="pl-c">// 用户记录日志</span></pre></div>
+
+<h5>
+<a id="debug-上报" class="anchor" href="#debug-%E4%B8%8A%E6%8A%A5" aria-hidden="true"><span class="octicon octicon-link"></span></a>debug 上报</h5>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">BJ_REPORT</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">"</span>debug<span class="pl-pds">"</span></span>);  <span class="pl-c">//可以结合实时上报，跟踪问题</span></pre></div>
+
+<p><br>
+<br></p>
+
+<h3>
+<a id="高级用法" class="anchor" href="#%E9%AB%98%E7%BA%A7%E7%94%A8%E6%B3%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>高级用法</h3>
+
+<blockquote>
+<p>script error  的错误，怎么解决？  <a href="https://github.com/BetterJS/badjs-report/issues/3">#3</a></p>
+</blockquote>
+
+<p>由于 BJ_Report 只是重写了onerror 方法而已，而且浏览器的跨域问题不能获得外链 javascript 的错误，所以使用tryJs  进行包裹。</p>
+
+<h4>
+<a id="包裹jquery" class="anchor" href="#%E5%8C%85%E8%A3%B9jquery" aria-hidden="true"><span class="octicon octicon-link"></span></a>包裹jquery</h4>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">BJ_REPORT</span>.tryJs().spyJquery();</pre></div>
+
+<p>包裹 jquery 的 event.add , event.remove , event.ajax 这几个异步方法。
+<br>
+<br></p>
+
+<h4>
+<a id="包裹-define--require" class="anchor" href="#%E5%8C%85%E8%A3%B9-define--require" aria-hidden="true"><span class="octicon octicon-link"></span></a>包裹 define , require</h4>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">BJ_REPORT</span>.tryJs().spyModules();</pre></div>
+
+<p>包裹 模块化框架 的 define , require 方法
+<br>
+<br></p>
+
+<h4>
+<a id="包裹--js-默认的方法" class="anchor" href="#%E5%8C%85%E8%A3%B9--js-%E9%BB%98%E8%AE%A4%E7%9A%84%E6%96%B9%E6%B3%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>包裹  js 默认的方法</h4>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c1">BJ_REPORT</span>.tryJs().spySystem();</pre></div>
+
+<p>包裹 js 的 setTimeout , setInterval 方法
+<br>
+<br></p>
+
+<h4>
+<a id="包裹-自定义的方法" class="anchor" href="#%E5%8C%85%E8%A3%B9-%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E6%96%B9%E6%B3%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>包裹 自定义的方法</h4>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> <span class="pl-en">customFunction</span> <span class="pl-k">=</span> <span class="pl-k">function</span> (){};
+customFunction  <span class="pl-k">=</span> <span class="pl-c1">BJ_REPORT</span>.tryJs().spyCustom(customFunction );
+
+<span class="pl-c">// 只会包裹 customOne  , customTwo</span>
+<span class="pl-k">var</span> customObject <span class="pl-k">=</span> { <span class="pl-en">customOne</span> <span class="pl-k">:</span> <span class="pl-k">function</span> (){} , <span class="pl-en">customTwo</span> <span class="pl-k">:</span> <span class="pl-k">function</span> (){} , customVar <span class="pl-k">:</span> <span class="pl-c1">1</span>}
+<span class="pl-c1">BJ_REPORT</span>.tryJs().spyCustom(customObject );</pre></div>
+
+<p>包裹 自定义的方法或则对象
+<br>
+<br></p>
+
+<h4>
+<a id="运行所有默认的包裹" class="anchor" href="#%E8%BF%90%E8%A1%8C%E6%89%80%E6%9C%89%E9%BB%98%E8%AE%A4%E7%9A%84%E5%8C%85%E8%A3%B9" aria-hidden="true"><span class="octicon octicon-link"></span></a>运行所有默认的包裹</h4>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-c">//自动运行 SpyJquery , SpyModule , SpySystem</span>
+<span class="pl-c1">BJ_REPORT</span>.tryJs().spyAll();</pre></div>
+
+<h2>
+<a id="update-log" class="anchor" href="#update-log" aria-hidden="true"><span class="octicon octicon-link"></span></a>update log</h2>
+
+<h5>
+<a id="v115" class="anchor" href="#v115" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.1.5</h5>
+
+<ol>
+<li>bugfix</li>
+</ol>
+
+<h5>
+<a id="v114" class="anchor" href="#v114" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.1.4</h5>
+
+<ol>
+<li>增加info 和 debug 接口</li>
+<li>report 增加对 error 对象处理</li>
+<li>处理 [Object event] 问题</li>
+</ol>
+
+<h5>
+<a id="v113" class="anchor" href="#v113" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.1.3</h5>
+
+<ol>
+<li>bugfix</li>
+</ol>
+
+<h5>
+<a id="v112" class="anchor" href="#v112" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.1.2</h5>
+
+<ol>
+<li>增加抽样参数 random</li>
+</ol>
+
+<h5>
+<a id="v111" class="anchor" href="#v111" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.1.1</h5>
+
+<ol>
+<li>seajs 兼容的BUG修复</li>
+<li>增加 ext 属性，用户可以自己定义里面的值上报</li>
+</ol>
+
+<h5>
+<a id="v110" class="anchor" href="#v110" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.1.0</h5>
+
+<ol>
+<li>增加对seajs 模块化的包裹</li>
+<li>增加对IE下面的错误的上报</li>
+</ol>
+
+<h5>
+<a id="v105" class="anchor" href="#v105" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.0.5</h5>
+
+<ol>
+<li>修复异步环境下抛给浏览器的BUG也会上报，</li>
+<li>修复ignore 数组判断的迭代的问题</li>
+</ol>
+
+<h5>
+<a id="v104" class="anchor" href="#v104" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.0.4</h5>
+
+<ol>
+<li>修复 spy 插件增加在 异步环境中，抛出异常捕获后，再抛给浏览器</li>
+<li>修复 增加在异步环境中，抛出异常，捕获后，将错误信息输出</li>
+<li>增加onReport 回调</li>
+</ol>
+
+<h5>
+<a id="v103" class="anchor" href="#v103" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.0.3</h5>
+
+<ol>
+<li>修复说明文档</li>
+</ol>
+
+<h5>
+<a id="v102" class="anchor" href="#v102" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.0.2</h5>
+
+<ol>
+<li>修复 uin 的正则</li>
+</ol>
+
+<h5>
+<a id="v101" class="anchor" href="#v101" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.0.1</h5>
+
+<ol>
+<li>增加 spy 插件</li>
+</ol>
+
+<h5>
+<a id="v100" class="anchor" href="#v100" aria-hidden="true"><span class="octicon octicon-link"></span></a>v1.0.0</h5>
+
+<ol>
+<li>功能上线</li>
+</ol>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/BetterJS/badjs-report">Badjs-report</a> is maintained by <a href="https://github.com/BetterJS">BetterJS</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
