@@ -135,7 +135,7 @@ BJ_REPORT.tryJs().spyAll();
 
 
 ## update log
-##### v1.1.5
+##### v1.1.6
 1. add BJ_ERROR hash
 
 ##### v1.1.5
