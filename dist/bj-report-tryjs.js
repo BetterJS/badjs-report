@@ -58,9 +58,9 @@ var BJ_REPORT = (function(global) {
     var _processError = function(errObj) {
         try {
             if (errObj.stack) {
-                var url = errObj.stack.match("http://[^\n]+");
+                var url = errObj.stack.match("https?://[^\n]+");
                 url = url ? url[0] : "";
-                var rowCols = url.match(":([0-9]+):([0-9]+)");
+                var rowCols = url.match(":(\\d+):(\\d+)");
                 if (!rowCols) {
                     rowCols = [0, 0, 0];
                 }
@@ -239,11 +239,10 @@ var BJ_REPORT = (function(global) {
         __onerror__: global.onerror
     };
 
-    typeof console !== "undefined" && console.error && setTimeout(function(){
-        console.error("BJ_ERROR", decodeURIComponent(((location.hash || '')
-                .match(/([#&])BJ_ERROR=([^&$]+)/) || [])[2]).replace(/(:\d+:\d+)\s*/g, '$1\n'));
+    typeof console !== "undefined" && console.error && setTimeout(function() {
+        var err = ((location.hash || '').match(/([#&])BJ_ERROR=([^&$]+)/) || [])[2];
+        err && console.error("BJ_ERROR", decodeURIComponent(err).replace(/(:\d+:\d+)\s*/g, '$1\n'));
     }, 0);
-
 
     return report;
 
