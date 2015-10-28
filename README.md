@@ -136,8 +136,10 @@ BJ_REPORT.tryJs().spyAll();
 
 ## update log
 ##### v1.1.5
-1. bugfix
+1. add BJ_ERROR hash
 
+##### v1.1.5
+1. bugfix
 
 ##### v1.1.4
 1. 增加info 和 debug 接口
