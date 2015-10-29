@@ -1,6 +1,6 @@
 {
     "name": "badjs-report",
-    "version": "1.1.6",
+    "version": "1.1.7",
     "homepage": "https://github.com/BetterJS/report",
     "author": "chriscai,kael",
     "description": "client report",
@@ -12,6 +12,5 @@
         "node_modules",
         "bower_components",
         "test"
-
     ]
 }
