@@ -12,6 +12,7 @@ bower install https://github.com/BetterJS/report.git
 
 ## Getting Started
 > badjs-report 必须在所有类库之前加载并初始化。
+> 但是要在 jquery、seajs、requrejs等类库后调用spyAll()。
 
 ##### 初始化
 ``` javascript
