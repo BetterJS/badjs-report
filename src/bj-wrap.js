@@ -197,6 +197,7 @@
                 return _define.apply(this, args);
             };
 
+            root.seajs.use = catArgs(root.seajs.use);
 
             _merge(root.define, _define);
         }

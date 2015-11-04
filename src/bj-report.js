@@ -32,6 +32,7 @@ var BJ_REPORT = (function(global) {
     };
 
     var _isEmpty = function(obj) {
+        if (obj === null) return true;
         if(_isOBJByType(obj , 'Number')){
             return false;
         }
