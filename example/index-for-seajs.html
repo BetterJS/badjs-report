@@ -12,31 +12,20 @@
     <script>
         BJ_REPORT.init({
             id: 1,
-            url: "http://test.aa.com/badjs"
+            url: "http://127.0.0.1/badjs"
         });
 
         BJ_REPORT.tryJs().spyAll();
 
+        seajs.config({
+            base: "http://www.baidu.com/badjs-report/example/",
+        })
 
 
 
-   /*   var a = function (){
-        b();
-      }
-
-      var b = function (){
-        c();
-      }
-
-      var c = function (){
-          bbbb
-      }
-
-
-        a();*/
-
+        seajs.use("report.js" , function (report){
+            report.init()
+        })
     </script>
-    <script src="report.js"></script>
-<!--<img src="ssss" onerror="function (){window.onerror.apply(this,arguments)}">-->
 </body>
 </html>

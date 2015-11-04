@@ -136,6 +136,10 @@ BJ_REPORT.tryJs().spyAll();
 
 
 ## update log
+##### v1.1.7
+1. 合并上报的问题
+2. 增加sea.use try-catch 处理
+
 ##### v1.1.6
 1. add BJ_ERROR hash
 

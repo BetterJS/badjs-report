@@ -197,6 +197,7 @@
                 return _define.apply(this, args);
             };
 
+
             _merge(root.define, _define);
         }
 

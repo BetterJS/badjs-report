@@ -31,6 +31,14 @@ var BJ_REPORT = (function(global) {
         return type === "object" && !!obj;
     };
 
+    var _isEmpty = function(obj) {
+        if (obj === null) return true;
+        if(_isOBJByType(obj , 'Number')){
+            return false;
+        }
+        return !obj;
+    };
+
     var orgError = global.onerror;
     // rewrite window.oerror
     global.onerror = function(msg, url, line, col, error) {
@@ -96,8 +104,8 @@ var BJ_REPORT = (function(global) {
         if (_isOBJ(error)) {
             error.level = error.level || _config.level;
             for (var key in error) {
-                var value = error[key] || "";
-                if (value) {
+                var value = error[key];
+                if (!_isEmpty(value)) {
                     if (_isOBJ(value)) {
                         try {
                             value = JSON.stringify(value);
@@ -452,6 +460,8 @@ if (typeof exports !== "undefined") {
                 }
                 return _define.apply(this, args);
             };
+
+            root.seajs.use = catArgs(root.seajs.use);
 
             _merge(root.define, _define);
         }

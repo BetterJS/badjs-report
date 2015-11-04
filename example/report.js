@@ -1,3 +1,17 @@
 
-require(["aa.js?bbbb"] , function (){
+define(function (require, exports, module){
+
+    module.exports ={
+        init : function (){
+            bbbb+++1
+        }
+    }
 })
+
+
+
+ssssssssssss
+
+
+
+
