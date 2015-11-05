@@ -2,7 +2,7 @@
     "name": "badjs-report",
     "version": "1.1.8",
     "homepage": "https://github.com/BetterJS/badjs-report",
-    "author": "chriscai,kael",
+    "author": "chriscai, yorts52",
     "description": "client report",
     "main": "dist/bj_report.js",
     "license": "MIT",
