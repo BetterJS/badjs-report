@@ -5,10 +5,8 @@
 npm install badjs-report
 ```
 ``` javascript
-bower install https://github.com/BetterJS/report.git
+bower install https://github.com/BetterJS/badjs-report.git
 ```
-
-
 
 ## Getting Started
 > badjs-report 必须在所有类库之前加载并初始化。
@@ -34,7 +32,6 @@ BJ_REPORT.init({
   random : 1                            // 抽样上报，1~0 之间数值，  1为100%上报
   onReport : function (id , errObj){    // 当上报的时候回调 。 id: 上报的id , errObj : 错误的对象
   ext : {}                              // 扩展属性，后端做扩展处理属性。例如：存在 msid 就会分发到 monitor.server.com
-
   }
 });
 ```
@@ -134,8 +131,10 @@ BJ_REPORT.tryJs().spyCustom(customObject );
 BJ_REPORT.tryJs().spyAll();
 ```
 
-
 ## update log
+##### v1.1.8
+1. 项目重命名后更新项目路径(注: 之前名字为`report`)
+
 ##### v1.1.7
 1. 合并上报的问题
 2. 增加sea.use try-catch 处理
@@ -185,7 +184,3 @@ BJ_REPORT.tryJs().spyAll();
 
 ##### v1.0.0
 1. 功能上线
-
-
-
-
