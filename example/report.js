@@ -6,12 +6,6 @@ define(function (require, exports, module){
             bbbb+++1
         }
     }
-})
+});
 
-
-
-ssssssssssss
-
-
-
-
+s13cc();
