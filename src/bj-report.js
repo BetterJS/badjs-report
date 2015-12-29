@@ -15,7 +15,7 @@ var BJ_REPORT = (function(global) {
         url: "",
         combo: 1,
         ext: {},
-        level: 4, // 1-debug 2-info 4-error 8-fail
+        level: 4, // 1-debug 2-info 4-error 
         ignore: [],
         random: 1,
         delay: 1000,
