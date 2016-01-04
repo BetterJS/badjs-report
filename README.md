@@ -1,11 +1,24 @@
 # BJ_REPORT
 
-# Installation
-``` javascript
-npm install badjs-report
+# badjs-report
+前端异常捕获和上报
+
+## Author
+[yorts52](https://github.com/yorts52) [caihuiji](https://github.com/caihuiji)
+
+## Install
+
+```shell
+$ lego install badjs-report --save
+
 ```
-``` javascript
-bower install https://github.com/BetterJS/badjs-report.git
+
+```shell
+$ npm install badjs-report
+```
+
+```shell
+$ bower install https://github.com/BetterJS/badjs-report.git
 ```
 
 ## Getting Started
@@ -13,21 +26,21 @@ bower install https://github.com/BetterJS/badjs-report.git
 > 但是要在 jquery、seajs、requrejs等类库后调用spyAll()。
 
 ##### 初始化
-``` javascript
+```javascript
 BJ_REPORT.init({
-  id: 1                                   // 不指定id将不上报
+  id: 1                                 // 不指定id将不上报
 });
 ```
 ##### 配置说明
-``` javascript
+```javascript
 BJ_REPORT.init({
   id: 1,                                // 不指定id将不上报
   uin: 123,                             // 指定用户 number , 默认已经读取 qq uin
-  combo:0,								// combo 是否合并上报， 0 关闭， 1 启动（默认）
-  delay:1000, 							// 当 combo= 1 可用，延迟多少毫秒，合并缓冲区中的上报
-  url: "//badjs2.qq.com/badjs",    // 指定上报地址
+  combo:0,                              // combo 是否合并上报， 0 关闭， 1 启动（默认）
+  delay:1000,                           // 当 combo= 1 可用，延迟多少毫秒，合并缓冲区中的上报
+  url: "//badjs2.qq.com/badjs",         // 指定上报地址
   ignore: [/Script error/i],            // 忽略某个错误
-  level: 4, // 设置默认的级别             // 上报等级   // 1-debug 2-info 4-error
+  level: 4,                             // 上报等级   // 1-debug 2-info 4-error
   target : "xxxx.js"                    //  错误来源的js
   random : 1                            // 抽样上报，1~0 之间数值，  1为100%上报
   onReport : function (id , errObj){    // 当上报的时候回调 。 id: 上报的id , errObj : 错误的对象
@@ -38,7 +51,7 @@ BJ_REPORT.init({
 BJ_Report 是重写了 window.onerror 进行上报的，无需编写任何捕获错误的代码
 <br/>
 #####  手动上报
-``` javascript
+```javascript
 BJ_REPORT.report("error msg");
 
 BJ_REPORT.report({
@@ -56,7 +69,7 @@ try{
 ```
 <br/>
 #####  延迟上报
-``` javascript
+```javascript
 BJ_REPORT.push("error msg");
 
 BJ_REPORT.push({
@@ -73,17 +86,17 @@ BJ_REPORT.report();
 当 combo = 0 时候的， 会延迟 delay 毫秒，再合并上报
 <br/>
 #####  可以链式调用
-``` javascript
+```javascript
 BJ_REPORT.init({id: 1}).push("error msg").report("error msg 2");
 ```
 
 #####  info 上报
-``` javascript
+```javascript
 BJ_REPORT.info("info"); // 用户记录日志
 ```
 
 #####  debug 上报
-``` javascript
+```javascript
 BJ_REPORT.debug("debug");  //可以结合实时上报，跟踪问题
 ```
 <br/>
@@ -93,28 +106,28 @@ BJ_REPORT.debug("debug");  //可以结合实时上报，跟踪问题
 
 由于 BJ_Report 只是重写了onerror 方法而已，而且浏览器的跨域问题不能获得外链 javascript 的错误，所以使用tryJs  进行包裹。
 #### 包裹jquery
-``` javascript
+```javascript
 BJ_REPORT.tryJs().spyJquery();
 ```
 包裹 jquery 的 event.add , event.remove , event.ajax 这几个异步方法。
 <br/>
 <br/>
 #### 包裹 define , require
-``` javascript
+```javascript
 BJ_REPORT.tryJs().spyModules();
 ```
 包裹 模块化框架 的 define , require 方法
 <br/>
 <br/>
 #### 包裹  js 默认的方法
-``` javascript
+```javascript
 BJ_REPORT.tryJs().spySystem();
 ```
 包裹 js 的 setTimeout , setInterval 方法
 <br/>
 <br/>
 #### 包裹 自定义的方法
-``` javascript
+```javascript
 var customFunction = function (){};
 customFunction  = BJ_REPORT.tryJs().spyCustom(customFunction );
 
@@ -126,7 +139,7 @@ BJ_REPORT.tryJs().spyCustom(customObject );
 <br/>
 <br/>
 #### 运行所有默认的包裹
-``` javascript
+```javascript
 //自动运行 SpyJquery , SpyModule , SpySystem
 BJ_REPORT.tryJs().spyAll();
 ```
