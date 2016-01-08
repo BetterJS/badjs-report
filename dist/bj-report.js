@@ -15,7 +15,7 @@ var BJ_REPORT = (function(global) {
         url: "",
         combo: 1,
         ext: {},
-        level: 4, // 1-debug 2-info 4-error 8-fail
+        level: 4, // 1-debug 2-info 4-error
         ignore: [],
         random: 1,
         delay: 1000,
@@ -239,7 +239,7 @@ var BJ_REPORT = (function(global) {
             // 没有设置id将不上报
             var id = parseInt(_config.id, 10);
             if (id) {
-                _config.report = (_config.url || "//badjs2.qq.com/badjs") + "?id=" + id + "&uin=" + parseInt(_config.uin || (document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10) + "&from=" + encodeURIComponent(location.href) + "&ext=" + JSON.stringify(_config.ext) + "&";
+                _config.report = (_config.url || "//badjs2.qq.com/badjs") + "?id=" + id + "&uin=" + (_config.uin || parseInt( (document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10)) + "&from=" + encodeURIComponent(location.href) + "&ext=" + JSON.stringify(_config.ext) + "&";
             }
             return report;
         },
