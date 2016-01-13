@@ -81,6 +81,10 @@ var BJ_REPORT = (function(global) {
                     target: url.replace(rowCols[0], "")
                 };
             } else {
+                //ie 独有 error 对象信息，try-catch 捕获到错误信息传过来，造成没有msg
+                if(errObj.name && errObj.message && errObj.description){
+                    return {msg : JSON.stringify(errObj)};
+                }
                 return errObj;
             }
         } catch (err) {
