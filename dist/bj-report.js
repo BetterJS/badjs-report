@@ -243,7 +243,16 @@ var BJ_REPORT = (function(global) {
             // 没有设置id将不上报
             var id = parseInt(_config.id, 10);
             if (id) {
-                _config.report = (_config.url || "//badjs2.qq.com/badjs") + "?id=" + id + "&uin=" + (_config.uin || parseInt( (document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10)) + "&from=" + encodeURIComponent(location.href) + "&ext=" + JSON.stringify(_config.ext) + "&";
+                if(/qq\.com$/gi.test(window.location.hostname)){ // 如果qq域名，使用默认上报地址和读取QQ 号码
+                    if(!_config.url){
+                        _config.url = "//badjs2.qq.com/badjs";
+                    }
+
+                    if(!_config.uin){
+                        _config.uin = parseInt( (document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10);
+                    }
+                }
+                _config.report = _config.url  + "?id=" + id + "&uin=" + _config.uin + "&from=" + encodeURIComponent(location.href) + "&ext=" + JSON.stringify(_config.ext) + "&";
             }
             return report;
         },

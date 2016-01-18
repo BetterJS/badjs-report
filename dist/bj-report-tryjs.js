@@ -243,7 +243,16 @@ var BJ_REPORT = (function(global) {
             // 没有设置id将不上报
             var id = parseInt(_config.id, 10);
             if (id) {
-                _config.report = (_config.url || "//badjs2.qq.com/badjs") + "?id=" + id + "&uin=" + (_config.uin || parseInt( (document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10)) + "&from=" + encodeURIComponent(location.href) + "&ext=" + JSON.stringify(_config.ext) + "&";
+                if(/qq\.com$/gi.test(window.location.hostname)){ // 如果qq域名，使用默认上报地址和读取QQ 号码
+                    if(!_config.url){
+                        _config.url = "//badjs2.qq.com/badjs";
+                    }
+
+                    if(!_config.uin){
+                        _config.uin = parseInt( (document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10);
+                    }
+                }
+                _config.report = _config.url  + "?id=" + id + "&uin=" + _config.uin + "&from=" + encodeURIComponent(location.href) + "&ext=" + JSON.stringify(_config.ext) + "&";
             }
             return report;
         },
@@ -399,22 +408,37 @@ if (typeof exports !== "undefined") {
             return tryJs;
         }
 
-        var _add = _$.event.add,
-            _ajax = _$.ajax,
-            _remove = _$.event.remove;
+        var _add , _remove;
+        if(_$.zepto){
+            _add = _$.fn.on, _remove = _$.fn.off;
 
-        if (_add) {
+            _$.fn.on  = makeArgsTry(_add);
+            _$.fn.off  = function() {
+                var arg, args = [];
+                for (var i = 0, l = arguments.length; i < l; i++) {
+                    arg = arguments[i];
+                    _isFunction(arg) && arg.tryWrap && (arg = arg.tryWrap);
+                    args.push(arg);
+                }
+                return _remove.apply(this, args);
+            };
+
+        }else if(window.jQuery){
+            _add = _$.event.add, _remove = _$.event.remove;
+
             _$.event.add = makeArgsTry(_add);
             _$.event.remove = function() {
                 var arg, args = [];
                 for (var i = 0, l = arguments.length; i < l; i++) {
                     arg = arguments[i];
-                    _isFunction(arg) && (arg = arg.tryWrap);
+                    _isFunction(arg) && arg.tryWrap && (arg = arg.tryWrap);
                     args.push(arg);
                 }
                 return _remove.apply(this, args);
             };
         }
+
+        var _ajax = _$.ajax;
 
         if (_ajax) {
             _$.ajax = function(url, setting) {

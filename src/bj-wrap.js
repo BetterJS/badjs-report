@@ -131,32 +131,30 @@
             return tryJs;
         }
 
-
+        var _add , _remove;
         if(_$.zepto){
-            var _add = _$.fn.bind,
-                _remove = _$.fn.unbind;
+            _add = _$.fn.on, _remove = _$.fn.off;
 
-            _$.fn.bind = makeArgsTry(_$.fn.bind);
-            _$.fn.unbind = function() {
+            _$.fn.on  = makeArgsTry(_add);
+            _$.fn.off  = function() {
                 var arg, args = [];
                 for (var i = 0, l = arguments.length; i < l; i++) {
                     arg = arguments[i];
-                    _isFunction(arg) && (arg = arg.tryWrap);
+                    _isFunction(arg) && arg.tryWrap && (arg = arg.tryWrap);
                     args.push(arg);
                 }
                 return _remove.apply(this, args);
             };
 
         }else if(window.jQuery){
-            var _add = _$.event.add,
-                _remove = _$.event.remove;
+            _add = _$.event.add, _remove = _$.event.remove;
 
             _$.event.add = makeArgsTry(_add);
             _$.event.remove = function() {
                 var arg, args = [];
                 for (var i = 0, l = arguments.length; i < l; i++) {
                     arg = arguments[i];
-                    _isFunction(arg) && (arg = arg.tryWrap);
+                    _isFunction(arg) && arg.tryWrap && (arg = arg.tryWrap);
                     args.push(arg);
                 }
                 return _remove.apply(this, args);
