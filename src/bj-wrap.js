@@ -131,11 +131,26 @@
             return tryJs;
         }
 
-        var _add = _$.event.add,
-            _ajax = _$.ajax,
-            _remove = _$.event.remove;
 
-        if (_add) {
+        if(_$.zepto){
+            var _add = _$.fn.bind,
+                _remove = _$.fn.unbind;
+
+            _$.fn.bind = makeArgsTry(_$.fn.bind);
+            _$.fn.unbind = function() {
+                var arg, args = [];
+                for (var i = 0, l = arguments.length; i < l; i++) {
+                    arg = arguments[i];
+                    _isFunction(arg) && (arg = arg.tryWrap);
+                    args.push(arg);
+                }
+                return _remove.apply(this, args);
+            };
+
+        }else if(window.jQuery){
+            var _add = _$.event.add,
+                _remove = _$.event.remove;
+
             _$.event.add = makeArgsTry(_add);
             _$.event.remove = function() {
                 var arg, args = [];
@@ -147,6 +162,8 @@
                 return _remove.apply(this, args);
             };
         }
+
+        var _ajax = _$.ajax;
 
         if (_ajax) {
             _$.ajax = function(url, setting) {
