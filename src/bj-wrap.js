@@ -131,22 +131,37 @@
             return tryJs;
         }
 
-        var _add = _$.event.add,
-            _ajax = _$.ajax,
-            _remove = _$.event.remove;
+        var _add , _remove;
+        if(_$.zepto){
+            _add = _$.fn.on, _remove = _$.fn.off;
 
-        if (_add) {
+            _$.fn.on  = makeArgsTry(_add);
+            _$.fn.off  = function() {
+                var arg, args = [];
+                for (var i = 0, l = arguments.length; i < l; i++) {
+                    arg = arguments[i];
+                    _isFunction(arg) && arg.tryWrap && (arg = arg.tryWrap);
+                    args.push(arg);
+                }
+                return _remove.apply(this, args);
+            };
+
+        }else if(window.jQuery){
+            _add = _$.event.add, _remove = _$.event.remove;
+
             _$.event.add = makeArgsTry(_add);
             _$.event.remove = function() {
                 var arg, args = [];
                 for (var i = 0, l = arguments.length; i < l; i++) {
                     arg = arguments[i];
-                    _isFunction(arg) && (arg = arg.tryWrap);
+                    _isFunction(arg) && arg.tryWrap && (arg = arg.tryWrap);
                     args.push(arg);
                 }
                 return _remove.apply(this, args);
             };
         }
+
+        var _ajax = _$.ajax;
 
         if (_ajax) {
             _$.ajax = function(url, setting) {
