@@ -14,7 +14,7 @@ var BJ_REPORT = (function(global) {
         uin: 0,
         url: "",
         combo: 1,
-        ext: {},
+        ext: null,
         level: 4, // 1-debug 2-info 4-error
         ignore: [],
         random: 1,
@@ -33,7 +33,7 @@ var BJ_REPORT = (function(global) {
 
     var _isEmpty = function(obj) {
         if (obj === null) return true;
-        if(_isOBJByType(obj , 'Number')){
+        if (_isOBJByType(obj, 'Number')) {
             return false;
         }
         return !obj;
@@ -82,8 +82,10 @@ var BJ_REPORT = (function(global) {
                 };
             } else {
                 //ie 独有 error 对象信息，try-catch 捕获到错误信息传过来，造成没有msg
-                if(errObj.name && errObj.message && errObj.description){
-                    return {msg : JSON.stringify(errObj)};
+                if (errObj.name && errObj.message && errObj.description) {
+                    return {
+                        msg: JSON.stringify(errObj)
+                    };
                 }
                 return errObj;
             }
@@ -175,7 +177,7 @@ var BJ_REPORT = (function(global) {
         if (count) {
             var comboReport = function() {
                 clearTimeout(comboTimeout);
-                _submit(_config.report + error_list.join("&") + "&count=" + count + "&_t=" + (+new Date));
+                _submit(_config.report + error_list.join("&") + "&count=" + error_list.length + "&_t=" + (+new Date));
                 comboTimeout = 0;
                 error_list = [];
             };
@@ -190,12 +192,19 @@ var BJ_REPORT = (function(global) {
 
     var report = {
         push: function(msg) { // 将错误推到缓存池
+            // 抽样
             if (Math.random() >= _config.random) {
                 return report;
             }
-            _error.push(_isOBJ(msg) ? _processError(msg) : {
+
+            var data = _isOBJ(msg) ? _processError(msg) : {
                 msg: msg
-            });
+            };
+            // ext 有默认值, 且上报不包含 ext, 使用默认 ext
+            if (_config.ext && !data.ext) {
+                data.ext = _config.ext;
+            }
+            _error.push(data);
             _send();
             return report;
         },
@@ -243,16 +252,22 @@ var BJ_REPORT = (function(global) {
             // 没有设置id将不上报
             var id = parseInt(_config.id, 10);
             if (id) {
-                if(/qq\.com$/gi.test(window.location.hostname)){ // 如果qq域名，使用默认上报地址和读取QQ 号码
-                    if(!_config.url){
+                // set default report url and uin
+                if (/qq\.com$/gi.test(location.hostname)) {
+                    if (!_config.url) {
                         _config.url = "//badjs2.qq.com/badjs";
                     }
 
-                    if(!_config.uin){
-                        _config.uin = parseInt( (document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10);
+                    if (!_config.uin) {
+                        _config.uin = parseInt((document.cookie.match(/\buin=\D+(\d+)/) || [])[1], 10);
                     }
                 }
-                _config.report = _config.url  + "?id=" + id + "&uin=" + _config.uin + "&from=" + encodeURIComponent(location.href) + "&ext=" + JSON.stringify(_config.ext) + "&";
+
+                _config.report = (_config.url || "/badjs") +
+                    "?id=" + id +
+                    "&uin=" + _config.uin +
+                    "&from=" + encodeURIComponent(location.href) +
+                    "&";
             }
             return report;
         },
