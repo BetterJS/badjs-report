@@ -35,14 +35,13 @@ BJ_REPORT.init({
 ```javascript
 BJ_REPORT.init({
   id: 1,                                // 不指定id将不上报
-  uin: 123,                             // 指定用户 number , 默认已经读取 qq uin
+  uin: 123,                             // 指定用户 number , (默认已经读取 qq uin)
   combo:0,                              // combo 是否合并上报， 0 关闭， 1 启动（默认）
-  delay:1000,                           // 当 combo= 1 可用，延迟多少毫秒，合并缓冲区中的上报
+  delay:1000,                           // 当 combo= 1 可用，延迟多少毫秒，合并缓冲区中的上报（默认）
   url: "//badjs2.qq.com/badjs",         // 指定上报地址
-  ignore: [/Script error/i],            // 忽略某个错误
-  level: 4,                             // 上报等级   // 1-debug 2-info 4-error
-  target : "xxxx.js"                    //  错误来源的js
-  random : 1                            // 抽样上报，1~0 之间数值，  1为100%上报
+  ignore: [/Script error/i],            // 忽略某个错误     
+  level: 4,                             // 上报等级 （默认上报等级 4 ; 1-debug ,2-info, 4-error ）    
+  random : 1                            // 抽样上报，1~0 之间数值，  1为100%上报  （默认 1）
   onReport : function (id , errObj){    // 当上报的时候回调 。 id: 上报的id , errObj : 错误的对象
   ext : {}                              // 扩展属性，后端做扩展处理属性。例如：存在 msid 就会分发到 monitor.server.com
   }
