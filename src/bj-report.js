@@ -269,6 +269,11 @@ var BJ_REPORT = (function(global) {
                     "&from=" + encodeURIComponent(location.href) +
                     "&";
             }
+
+            // if had error in cache , report now
+            if(_error.length){
+                _send();
+            }
             return report;
         },
 
