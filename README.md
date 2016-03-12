@@ -95,7 +95,7 @@ BJ_REPORT.info("info"); // 用户记录日志
 
 #####  debug 上报
 ```javascript
-BJ_REPORT.debug("debug");  //可以结合实时上报，跟踪问题
+BJ_REPORT.debug("debug");  //可以结合实时上报，跟踪问题; 不存入存储
 ```
 <br/>
 <br/>
