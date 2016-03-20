@@ -4,6 +4,9 @@
     "main": "dist/bj_report.js",
     "description": "client report",
     "homepage": "https://github.com/BetterJS/badjs-report",
+    "scripts": {
+    "test": "grunt test"
+  },
     "author": [{
         "name": "yorts52",
         "email": "yorts52@qq.com"
