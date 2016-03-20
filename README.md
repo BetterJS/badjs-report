@@ -1,7 +1,7 @@
 
 #badjs-report -- 前端异常捕获与上报
 
-[![build status](https://travis-ci.org/BetterJS/badjs-report.svg?branch=master)](https://travis-ci.org/BetterJS/badjs-report)
+[![Build Status](https://travis-ci.org/BetterJS/badjs-report.svg?branch=master)](https://travis-ci.org/BetterJS/badjs-report)
 
 ## Author
 [yorts52](https://github.com/yorts52) [caihuiji](https://github.com/caihuiji)
