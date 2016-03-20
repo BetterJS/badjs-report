@@ -1,7 +1,8 @@
-# BJ_REPORT
 
 # badjs-report
 前端异常捕获和上报
+=======
+[![build status](https://travis-ci.org/BetterJS/badjs-report.svg?branch=master)](https://travis-ci.org/BetterJS/badjs-report)
 
 ## Author
 [yorts52](https://github.com/yorts52) [caihuiji](https://github.com/caihuiji)
@@ -9,16 +10,13 @@
 ## Install
 
 ```shell
-$ lego install badjs-report --save
-
-```
-
-```shell
 $ npm install badjs-report
 ```
-
 ```shell
 $ bower install https://github.com/BetterJS/badjs-report.git
+```
+```shell
+$ lego install badjs-report --save
 ```
 
 ## Getting Started
