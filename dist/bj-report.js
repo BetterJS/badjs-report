@@ -95,7 +95,7 @@ var BJ_REPORT = (function(global) {
     };
 
     var _processStackMsg = function(error) {
-        var stack = error.stack.replace(/\n/gi, "").split(/\bat\b/).slice(0, 5).join("@").replace(/\?[^:]+/gi, "");
+        var stack = error.stack.replace(/\n/gi, "").split(/\bat\b/).slice(0, 9).join("@").replace(/\?[^:]+/gi, "");
         var msg = error.toString();
         if (stack.indexOf(msg) < 0) {
             stack = msg + "@" + stack;
