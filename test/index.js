@@ -6,6 +6,11 @@ var expect = chai.expect;
 define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
     describe('init', function() {
 
+        // close repeat
+        BJ_REPORT.init({
+            repeat: 1e10
+        });
+
         it('one report , not combo  ', function(done) {
             BJ_REPORT.init({
                 id: 1,
@@ -124,17 +129,17 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
                 combo: 1,
                 delay: 200,
                 submit: function(url) {
-                    count ++ ;
+                    count++;
 
                 }
             });
-            BJ_REPORT.__onerror__("msg" , 0 , 0, null);
+            BJ_REPORT.__onerror__("msg", 0, 0, null);
             BJ_REPORT.report();
 
-            setTimeout(function (){
+            setTimeout(function() {
                 should.equal(count, 1);
                 done();
-            },500);
+            }, 500);
         });
 
 
@@ -234,18 +239,43 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
                 combo: 1,
                 delay: 200,
                 submit: function(url) {
-                    var match1 =  url.indexOf("ReferenceError");
+                    var match1 = url.indexOf("ReferenceError");
                     should.not.equal(match1, -1);
                     done();
                 }
             }).tryJs().spyAll();
 
-            try{
-                error111
-            }catch(e){
+            try {
+                error111; // jshint ignore:line
+            } catch (e) {
                 BJ_REPORT.report(e);
             }
 
+        });
+
+        it('repeat check', function(done, err) {
+
+            BJ_REPORT.init({
+                id: 1,
+                url: "http://test.qq.com/report",
+                combo: 1,
+                delay: 1000,
+                repeat: 1,
+                submit: function(url) {
+                    var match_count = (url.match(/repeatTest/g) || []).length;
+                    should.equal(match_count, 1);
+                    done();
+                    // close repeat
+                    BJ_REPORT.init({
+                        repeat: 1e10
+                    });
+                }
+            }).tryJs().spyAll();
+
+            BJ_REPORT.push('repeatTest');
+            BJ_REPORT.push('repeatTest');
+            BJ_REPORT.push('repeatTest');
+            BJ_REPORT.report('repeatTest');
         });
     });
 
@@ -279,7 +309,7 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
         it('spyAll', function(done, err) {
             var _cb;
 
-            window.require = function(requires, cb){
+            window.require = function(requires, cb) {
 
             };
             window.define = function(name, cb) {
@@ -308,7 +338,7 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             });
 
             (function() {
-                console.log(window.define)
+                console.log(window.define);
                 define();
             }).should.throw();
         });
