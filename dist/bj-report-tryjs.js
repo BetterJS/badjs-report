@@ -9,17 +9,19 @@ var BJ_REPORT = (function(global) {
     if (global.BJ_REPORT) return global.BJ_REPORT;
 
     var _error = [];
+    var _error_map = {};
     var _config = {
-        id: 0,
+        id: 0, // 上报 id
         uin: 0,
-        url: "",
-        combo: 1,
-        ext: null,
-        level: 4, // 1-debug 2-info 4-error
-        ignore: [],
-        random: 1,
-        delay: 1000,
-        submit: null
+        url: "", // 上报 接口
+        combo: 1, // 是否合并 !0-合并 0-不合并
+        ext: null, // 扩展参数 用于自定义上报
+        level: 4, // 错误级别 1-debug 2-info 4-error
+        ignore: [], // 忽略某个错误, 支持 Regexp 和 Function
+        random: 1, // 抽样 (0-1] 1-全量
+        delay: 1000, // 延迟上报 combo 为 true 时有效
+        submit: null, // 自定义上报方式
+        repeat: 1 // 重复上报次数(对于同一个错误超过多少次不上报)
     };
 
     var _isOBJByType = function(o, type) {
@@ -143,6 +145,13 @@ var BJ_REPORT = (function(global) {
         }
     };
 
+    var _is_repert = function(error) {
+        if (!_isOBJ(error)) return true;
+        var msg = error.msg;
+        var times = _error_map[msg] = (parseInt(_error_map[msg], 10) || 0) + 1;
+        return times > _config.repeat;
+    };
+
     var error_list = [];
     var comboTimeout = 0;
     var _send = function(isReoprtNow) {
@@ -151,6 +160,8 @@ var BJ_REPORT = (function(global) {
         while (_error.length) {
             var isIgnore = false;
             var error = _error.shift();
+            // 重复上报
+            if (_is_repert(error)) continue;
             var error_str = _error_tostring(error, error_list.length);
             if (_isOBJByType(_config.ignore, "Array")) {
                 for (var i = 0, l = _config.ignore.length; i < l; i++) {
@@ -200,6 +211,7 @@ var BJ_REPORT = (function(global) {
             var data = _isOBJ(msg) ? _processError(msg) : {
                 msg: msg
             };
+
             // ext 有默认值, 且上报不包含 ext, 使用默认 ext
             if (_config.ext && !data.ext) {
                 data.ext = _config.ext;
@@ -271,7 +283,7 @@ var BJ_REPORT = (function(global) {
             }
 
             // if had error in cache , report now
-            if(_error.length){
+            if (_error.length) {
                 _send();
             }
             return report;

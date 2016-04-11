@@ -6,42 +6,19 @@
     <script src="../src/bj-report.js"></script>
     <script src="../src/bj-wrap.js"></script>
     <script src="../node_modules/requirejs/require.js"></script>
-
 </head>
 <body>
     <script>
         BJ_REPORT.init({
             id: 1,
-            url: "http://127.0.0.1/badjs"
-            
-        });
+            url: "http://127.0.0.1/badjs",
+            combo: 1,
+            repeat: 2
+        }).tryJs().spyAll();
 
-        BJ_REPORT.tryJs().spyAll();
-
-
-
-/*
-      var a = function (){
-        b();
-      }
-
-      var b = function (){
-        c();
-      }
-
-      var c = function (){
-          bbbb
-      }
-
-
-        a();
-
-        aa*/
-
+        BJ_REPORT.push('repeat test');
+        BJ_REPORT.push('repeat test');
+        BJ_REPORT.push('repeat test');
     </script>
-  <!--  <script src="report.js"></script>-->
-    <!--<script src="asdfasdf.js"></script>-->
-    <!--<img src="sdfasdf">-->
-<img src="ssss" onerror="window.onerror.apply(this, arguments);">
 </body>
 </html>

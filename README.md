@@ -25,22 +25,23 @@ $ lego install badjs-report --save
 ##### 初始化
 ```javascript
 BJ_REPORT.init({
-  id: 1                                 // 不指定id将不上报
+  id: 1                                 // 不指定 id 将不上报
 });
 ```
 ##### 配置说明
 ```javascript
 BJ_REPORT.init({
-  id: 1,                                // 不指定id将不上报
-  uin: 123,                             // 指定用户 number , (默认已经读取 qq uin)
-  combo:0,                              // combo 是否合并上报， 0 关闭， 1 启动（默认）
-  delay:1000,                           // 当 combo= 1 可用，延迟多少毫秒，合并缓冲区中的上报（默认）
+  id: 1,                                // 上报 id, 不指定 id 将不上报
+  uin: 123,                             // 指定用户 id, (默认已经读取 qq uin)
+  combo: 0,                             // combo 是否合并上报， 0 关闭， 1 启动（默认）
+  delay: 1000,                          // 当 combo 为 true 可用，延迟多少毫秒，合并缓冲区中的上报（默认）
   url: "//badjs2.qq.com/badjs",         // 指定上报地址
-  ignore: [/Script error/i],            // 忽略某个错误     
-  random : 1                            // 抽样上报，1~0 之间数值，  1为100%上报  （默认 1）
-  onReport : function (id , errObj){    // 当上报的时候回调 。 id: 上报的id , errObj : 错误的对象
-  ext : {}                              // 扩展属性，后端做扩展处理属性。例如：存在 msid 就会分发到 monitor.server.com
-  }
+  ignore: [/Script error/i],            // 忽略某个错误
+  random: 1,                            // 抽样上报，1~0 之间数值，1为100%上报（默认 1）
+  repeat: 1,                            // 重复上报次数(对于同一个错误超过多少次不上报)
+                                        // 避免出现单个用户同一错误上报过多的情况
+  onReport: function(id, errObj){},     // 当上报的时候回调。 id: 上报的 id, errObj: 错误的对象
+  ext: {}                               // 扩展属性，后端做扩展处理属性。例如：存在 msid 就会分发到 monitor
 });
 ```
 BJ_Report 是重写了 window.onerror 进行上报的，无需编写任何捕获错误的代码
