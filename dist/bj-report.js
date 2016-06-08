@@ -12,7 +12,7 @@ var BJ_REPORT = (function(global) {
     var _error_map = {};
     var _config = {
         id: 0, // 上报 id
-        uin: 0,
+        uin: 0, // user id
         url: "", // 上报 接口
         combo: 1, // 是否合并 !0-合并 0-不合并
         ext: null, // 扩展参数 用于自定义上报
@@ -35,7 +35,7 @@ var BJ_REPORT = (function(global) {
 
     var _isEmpty = function(obj) {
         if (obj === null) return true;
-        if (_isOBJByType(obj, 'Number')) {
+        if (_isOBJByType(obj, "Number")) {
             return false;
         }
         return !obj;
@@ -51,7 +51,9 @@ var BJ_REPORT = (function(global) {
         }
 
         if (_isOBJByType(newMsg, "Event")) {
-            newMsg += newMsg.type ? ("--" + newMsg.type + "--" + (newMsg.target ? (newMsg.target.tagName + "::" + newMsg.target.src) : "")) : "";
+            newMsg += newMsg.type ?
+                ("--" + newMsg.type + "--" + (newMsg.target ?
+                    (newMsg.target.tagName + "::" + newMsg.target.src) : "")) : "";
         }
 
         report.push({
@@ -97,7 +99,12 @@ var BJ_REPORT = (function(global) {
     };
 
     var _processStackMsg = function(error) {
-        var stack = error.stack.replace(/\n/gi, "").split(/\bat\b/).slice(0, 9).join("@").replace(/\?[^:]+/gi, "");
+        var stack = error.stack
+            .replace(/\n/gi, "")
+            .split(/\bat\b/)
+            .slice(0, 9)
+            .join("@")
+            .replace(/\?[^:]+/gi, "");
         var msg = error.toString();
         if (stack.indexOf(msg) < 0) {
             stack = msg + "@" + stack;
@@ -201,7 +208,7 @@ var BJ_REPORT = (function(global) {
         }
     };
 
-    var report = {
+    var report = global.BJ_REPORT = {
         push: function(msg) { // 将错误推到缓存池
             // 抽样
             if (Math.random() >= _config.random) {
@@ -293,17 +300,14 @@ var BJ_REPORT = (function(global) {
     };
 
     typeof console !== "undefined" && console.error && setTimeout(function() {
-        var err = ((location.hash || '').match(/([#&])BJ_ERROR=([^&$]+)/) || [])[2];
-        err && console.error("BJ_ERROR", decodeURIComponent(err).replace(/(:\d+:\d+)\s*/g, '$1\n'));
+        var err = ((location.hash || "").match(/([#&])BJ_ERROR=([^&$]+)/) || [])[2];
+        err && console.error("BJ_ERROR", decodeURIComponent(err).replace(/(:\d+:\d+)\s*/g, "$1\n"));
     }, 0);
 
     return report;
 
 }(window));
 
-if (typeof exports !== "undefined") {
-    if (typeof module !== "undefined" && module.exports) {
-        exports = module.exports = BJ_REPORT;
-    }
-    exports.BJ_REPORT = BJ_REPORT;
+if (typeof module !== "undefined") {
+    module.exports = BJ_REPORT;
 }

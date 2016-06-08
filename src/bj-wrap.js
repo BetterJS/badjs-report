@@ -1,29 +1,30 @@
-(function(root) {
+(function(global) {
 
-    if (!root.BJ_REPORT) {
+    if (!global.BJ_REPORT) {
+        console.error("please load bg-report first");
         return;
     }
 
     var _onthrow = function(errObj) {
-        root.BJ_REPORT.report(errObj);
+        global.BJ_REPORT.report(errObj);
     };
 
-    var tryJs = root.BJ_REPORT.tryJs = function init(throwCb) {
+    var tryJs = {};
+    global.BJ_REPORT.tryJs = function(throwCb) {
         throwCb && (_onthrow = throwCb);
         return tryJs;
     };
 
     // merge
     var _merge = function(org, obj) {
-        var key;
-        for (key in obj) {
+        for (var key in obj) {
             org[key] = obj[key];
         }
     };
 
     // function or not
     var _isFunction = function(foo) {
-        return typeof foo === 'function';
+        return typeof foo === "function";
     };
 
     var timeoutkey;
@@ -43,10 +44,10 @@
 
                 // hang up browser and throw , but it should trigger onerror , so rewrite onerror then recover it
                 if (!timeoutkey) {
-                    var orgOnerror = root.onerror;
-                    root.onerror = function() {};
+                    var orgOnerror = global.onerror;
+                    global.onerror = function() {};
                     timeoutkey = setTimeout(function() {
-                        root.onerror = orgOnerror;
+                        global.onerror = orgOnerror;
                         timeoutkey = null;
                     }, 50);
                 }
@@ -70,7 +71,7 @@
     var catTimeout = function(foo) {
         return function(cb, timeout) {
             // for setTimeout(string, delay)
-            if (typeof cb === 'string') {
+            if (typeof cb === "string") {
                 try {
                     cb = new Function(cb);
                 } catch (err) {
@@ -125,18 +126,18 @@
      * @returns {Function}
      */
     tryJs.spyJquery = function() {
-        var _$ = root.$;
+        var _$ = global.$;
 
         if (!_$ || !_$.event) {
             return tryJs;
         }
 
-        var _add , _remove;
-        if(_$.zepto){
+        var _add, _remove;
+        if (_$.zepto) {
             _add = _$.fn.on, _remove = _$.fn.off;
 
-            _$.fn.on  = makeArgsTry(_add);
-            _$.fn.off  = function() {
+            _$.fn.on = makeArgsTry(_add);
+            _$.fn.off = function() {
                 var arg, args = [];
                 for (var i = 0, l = arguments.length; i < l; i++) {
                     arg = arguments[i];
@@ -146,7 +147,7 @@
                 return _remove.apply(this, args);
             };
 
-        }else if(window.jQuery){
+        } else if (window.jQuery) {
             _add = _$.event.add, _remove = _$.event.remove;
 
             _$.event.add = makeArgsTry(_add);
@@ -178,23 +179,22 @@
         return tryJs;
     };
 
-
     /**
      * wrap amd or commonjs of function  ,exp :  define , require ,
      * @returns {Function}
      */
     tryJs.spyModules = function() {
-        var _require = root.require,
-            _define = root.define;
+        var _require = global.require,
+            _define = global.define;
         if (_define && _define.amd && _require) {
-            root.require = catArgs(_require);
-            _merge(root.require, _require);
-            root.define = catArgs(_define);
-            _merge(root.define, _define);
+            global.require = catArgs(_require);
+            _merge(global.require, _require);
+            global.define = catArgs(_define);
+            _merge(global.define, _define);
         }
 
-        if (root.seajs && _define) {
-            root.define = function() {
+        if (global.seajs && _define) {
+            global.define = function() {
                 var arg, args = [];
                 for (var i = 0, l = arguments.length; i < l; i++) {
                     arg = arguments[i];
@@ -212,9 +212,9 @@
                 return _define.apply(this, args);
             };
 
-            root.seajs.use = catArgs(root.seajs.use);
+            global.seajs.use = catArgs(global.seajs.use);
 
-            _merge(root.define, _define);
+            _merge(global.define, _define);
         }
 
         return tryJs;
@@ -225,8 +225,8 @@
      * @returns {Function}
      */
     tryJs.spySystem = function() {
-        root.setTimeout = catTimeout(root.setTimeout);
-        root.setInterval = catTimeout(root.setInterval);
+        global.setTimeout = catTimeout(global.setTimeout);
+        global.setInterval = catTimeout(global.setInterval);
         return tryJs;
     };
 
@@ -248,7 +248,10 @@
      * @returns {Function}
      */
     tryJs.spyAll = function() {
-        tryJs.spyJquery().spyModules().spySystem();
+        tryJs
+            .spyJquery()
+            .spyModules()
+            .spySystem();
         return tryJs;
     };
 

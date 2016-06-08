@@ -12,7 +12,7 @@ var BJ_REPORT = (function(global) {
     var _error_map = {};
     var _config = {
         id: 0, // 上报 id
-        uin: 0,
+        uin: 0, // user id
         url: "", // 上报 接口
         combo: 1, // 是否合并 !0-合并 0-不合并
         ext: null, // 扩展参数 用于自定义上报
@@ -35,7 +35,7 @@ var BJ_REPORT = (function(global) {
 
     var _isEmpty = function(obj) {
         if (obj === null) return true;
-        if (_isOBJByType(obj, 'Number')) {
+        if (_isOBJByType(obj, "Number")) {
             return false;
         }
         return !obj;
@@ -51,7 +51,9 @@ var BJ_REPORT = (function(global) {
         }
 
         if (_isOBJByType(newMsg, "Event")) {
-            newMsg += newMsg.type ? ("--" + newMsg.type + "--" + (newMsg.target ? (newMsg.target.tagName + "::" + newMsg.target.src) : "")) : "";
+            newMsg += newMsg.type ?
+                ("--" + newMsg.type + "--" + (newMsg.target ?
+                    (newMsg.target.tagName + "::" + newMsg.target.src) : "")) : "";
         }
 
         report.push({
@@ -97,7 +99,12 @@ var BJ_REPORT = (function(global) {
     };
 
     var _processStackMsg = function(error) {
-        var stack = error.stack.replace(/\n/gi, "").split(/\bat\b/).slice(0, 9).join("@").replace(/\?[^:]+/gi, "");
+        var stack = error.stack
+            .replace(/\n/gi, "")
+            .split(/\bat\b/)
+            .slice(0, 9)
+            .join("@")
+            .replace(/\?[^:]+/gi, "");
         var msg = error.toString();
         if (stack.indexOf(msg) < 0) {
             stack = msg + "@" + stack;
@@ -201,7 +208,7 @@ var BJ_REPORT = (function(global) {
         }
     };
 
-    var report = {
+    var report = global.BJ_REPORT = {
         push: function(msg) { // 将错误推到缓存池
             // 抽样
             if (Math.random() >= _config.random) {
@@ -293,46 +300,43 @@ var BJ_REPORT = (function(global) {
     };
 
     typeof console !== "undefined" && console.error && setTimeout(function() {
-        var err = ((location.hash || '').match(/([#&])BJ_ERROR=([^&$]+)/) || [])[2];
-        err && console.error("BJ_ERROR", decodeURIComponent(err).replace(/(:\d+:\d+)\s*/g, '$1\n'));
+        var err = ((location.hash || "").match(/([#&])BJ_ERROR=([^&$]+)/) || [])[2];
+        err && console.error("BJ_ERROR", decodeURIComponent(err).replace(/(:\d+:\d+)\s*/g, "$1\n"));
     }, 0);
 
     return report;
 
 }(window));
 
-if (typeof exports !== "undefined") {
-    if (typeof module !== "undefined" && module.exports) {
-        exports = module.exports = BJ_REPORT;
-    }
-    exports.BJ_REPORT = BJ_REPORT;
-}
-;(function(root) {
+if (typeof module !== "undefined") {
+    module.exports = BJ_REPORT;
+};(function(global) {
 
-    if (!root.BJ_REPORT) {
+    if (!global.BJ_REPORT) {
+        console.error("please load bg-report first");
         return;
     }
 
     var _onthrow = function(errObj) {
-        root.BJ_REPORT.report(errObj);
+        global.BJ_REPORT.report(errObj);
     };
 
-    var tryJs = root.BJ_REPORT.tryJs = function init(throwCb) {
+    var tryJs = {};
+    global.BJ_REPORT.tryJs = function(throwCb) {
         throwCb && (_onthrow = throwCb);
         return tryJs;
     };
 
     // merge
     var _merge = function(org, obj) {
-        var key;
-        for (key in obj) {
+        for (var key in obj) {
             org[key] = obj[key];
         }
     };
 
     // function or not
     var _isFunction = function(foo) {
-        return typeof foo === 'function';
+        return typeof foo === "function";
     };
 
     var timeoutkey;
@@ -352,10 +356,10 @@ if (typeof exports !== "undefined") {
 
                 // hang up browser and throw , but it should trigger onerror , so rewrite onerror then recover it
                 if (!timeoutkey) {
-                    var orgOnerror = root.onerror;
-                    root.onerror = function() {};
+                    var orgOnerror = global.onerror;
+                    global.onerror = function() {};
                     timeoutkey = setTimeout(function() {
-                        root.onerror = orgOnerror;
+                        global.onerror = orgOnerror;
                         timeoutkey = null;
                     }, 50);
                 }
@@ -379,7 +383,7 @@ if (typeof exports !== "undefined") {
     var catTimeout = function(foo) {
         return function(cb, timeout) {
             // for setTimeout(string, delay)
-            if (typeof cb === 'string') {
+            if (typeof cb === "string") {
                 try {
                     cb = new Function(cb);
                 } catch (err) {
@@ -434,18 +438,18 @@ if (typeof exports !== "undefined") {
      * @returns {Function}
      */
     tryJs.spyJquery = function() {
-        var _$ = root.$;
+        var _$ = global.$;
 
         if (!_$ || !_$.event) {
             return tryJs;
         }
 
-        var _add , _remove;
-        if(_$.zepto){
+        var _add, _remove;
+        if (_$.zepto) {
             _add = _$.fn.on, _remove = _$.fn.off;
 
-            _$.fn.on  = makeArgsTry(_add);
-            _$.fn.off  = function() {
+            _$.fn.on = makeArgsTry(_add);
+            _$.fn.off = function() {
                 var arg, args = [];
                 for (var i = 0, l = arguments.length; i < l; i++) {
                     arg = arguments[i];
@@ -455,7 +459,7 @@ if (typeof exports !== "undefined") {
                 return _remove.apply(this, args);
             };
 
-        }else if(window.jQuery){
+        } else if (window.jQuery) {
             _add = _$.event.add, _remove = _$.event.remove;
 
             _$.event.add = makeArgsTry(_add);
@@ -487,23 +491,22 @@ if (typeof exports !== "undefined") {
         return tryJs;
     };
 
-
     /**
      * wrap amd or commonjs of function  ,exp :  define , require ,
      * @returns {Function}
      */
     tryJs.spyModules = function() {
-        var _require = root.require,
-            _define = root.define;
+        var _require = global.require,
+            _define = global.define;
         if (_define && _define.amd && _require) {
-            root.require = catArgs(_require);
-            _merge(root.require, _require);
-            root.define = catArgs(_define);
-            _merge(root.define, _define);
+            global.require = catArgs(_require);
+            _merge(global.require, _require);
+            global.define = catArgs(_define);
+            _merge(global.define, _define);
         }
 
-        if (root.seajs && _define) {
-            root.define = function() {
+        if (global.seajs && _define) {
+            global.define = function() {
                 var arg, args = [];
                 for (var i = 0, l = arguments.length; i < l; i++) {
                     arg = arguments[i];
@@ -521,9 +524,9 @@ if (typeof exports !== "undefined") {
                 return _define.apply(this, args);
             };
 
-            root.seajs.use = catArgs(root.seajs.use);
+            global.seajs.use = catArgs(global.seajs.use);
 
-            _merge(root.define, _define);
+            _merge(global.define, _define);
         }
 
         return tryJs;
@@ -534,8 +537,8 @@ if (typeof exports !== "undefined") {
      * @returns {Function}
      */
     tryJs.spySystem = function() {
-        root.setTimeout = catTimeout(root.setTimeout);
-        root.setInterval = catTimeout(root.setInterval);
+        global.setTimeout = catTimeout(global.setTimeout);
+        global.setInterval = catTimeout(global.setInterval);
         return tryJs;
     };
 
@@ -557,7 +560,10 @@ if (typeof exports !== "undefined") {
      * @returns {Function}
      */
     tryJs.spyAll = function() {
-        tryJs.spyJquery().spyModules().spySystem();
+        tryJs
+            .spyJquery()
+            .spyModules()
+            .spySystem();
         return tryJs;
     };
 
