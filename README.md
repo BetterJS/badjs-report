@@ -141,6 +141,11 @@ BJ_REPORT.tryJs().spyAll();
 ```
 
 ## update log
+##### v1.2.1
+1. 增加去除重复参数
+2. 修复了 webpack 引入问题
+3. BUGFIX
+
 ##### v1.1.8
 1. 项目重命名后更新项目路径(注: 之前名字为`report`)
 
