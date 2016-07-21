@@ -33,7 +33,7 @@ BJ_REPORT.init({
 BJ_REPORT.init({
   id: 1,                                // 上报 id, 不指定 id 将不上报
   uin: 123,                             // 指定用户 id, (默认已经读取 qq uin)
-  combo: 0,                             // combo 是否合并上报， 0 关闭， 1 启动（默认）
+  combo: 1,                             // combo 是否合并上报， 0 关闭， 1 启动（默认）
   delay: 1000,                          // 当 combo 为 true 可用，延迟多少毫秒，合并缓冲区中的上报（默认）
   url: "//badjs2.qq.com/badjs",         // 指定上报地址
   ignore: [/Script error/i],            // 忽略某个错误
