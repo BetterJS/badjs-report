@@ -6,7 +6,7 @@
     }
 
     var _onthrow = function(errObj) {
-        global.BJ_REPORT.report(errObj);
+        global.BJ_REPORT.push(errObj);
     };
 
     var tryJs = {};
