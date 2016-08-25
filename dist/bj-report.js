@@ -21,7 +21,7 @@ var BJ_REPORT = (function(global) {
         random: 1, // 抽样 (0-1] 1-全量
         delay: 1000, // 延迟上报 combo 为 true 时有效
         submit: null, // 自定义上报方式
-        repeat: 1 // 重复上报次数(对于同一个错误超过多少次不上报)
+        repeat: 5 // 重复上报次数(对于同一个错误超过多少次不上报)
     };
 
     var _isOBJByType = function(o, type) {
