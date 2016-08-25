@@ -223,6 +223,11 @@ var BJ_REPORT = (function(global) {
             if (_config.ext && !data.ext) {
                 data.ext = _config.ext;
             }
+            // 在错误发生时获取页面链接
+            // https://github.com/BetterJS/badjs-report/issues/19
+            if (!data.from) {
+                data.from = encodeURIComponent(location.href);
+            }
             _error.push(data);
             _send();
             return report;
@@ -285,7 +290,7 @@ var BJ_REPORT = (function(global) {
                 _config.report = (_config.url || "/badjs") +
                     "?id=" + id +
                     "&uin=" + _config.uin +
-                    "&from=" + encodeURIComponent(location.href) +
+                    // "&from=" + encodeURIComponent(location.href) +
                     "&";
             }
 
