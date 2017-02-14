@@ -226,7 +226,7 @@ var BJ_REPORT = (function(global) {
             // 在错误发生时获取页面链接
             // https://github.com/BetterJS/badjs-report/issues/19
             if (!data.from) {
-                data.from = encodeURIComponent(location.href);
+                data.from = location.href;
             }
             _error.push(data);
             _send();
