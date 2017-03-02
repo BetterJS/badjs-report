@@ -141,6 +141,10 @@ BJ_REPORT.tryJs().spyAll();
 ```
 
 ## update log
+##### v1.2.3
+1. BUGFIX
+
+
 ##### v1.2.1
 1. 增加去除重复参数
 2. 修复了 webpack 引入问题
