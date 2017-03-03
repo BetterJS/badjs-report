@@ -41,7 +41,8 @@ BJ_REPORT.init({
   repeat: 5,                            // 重复上报次数(对于同一个错误超过多少次不上报)
                                         // 避免出现单个用户同一错误上报过多的情况
   onReport: function(id, errObj){},     // 当上报的时候回调。 id: 上报的 id, errObj: 错误的对象
-  ext: {}                               // 扩展属性，后端做扩展处理属性。例如：存在 msid 就会分发到 monitor
+  submit,                               // 覆盖原来的上报方式，可以自行修改为 post 上报等
+  ext: {}                               // 扩展属性，后端做扩展处理属性。例如：存在 msid 就会分发到 monitor
 });
 ```
 BJ_Report 是重写了 window.onerror 进行上报的，无需编写任何捕获错误的代码
