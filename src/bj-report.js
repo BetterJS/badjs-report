@@ -25,6 +25,92 @@ var BJ_REPORT = (function(global) {
         offlineLogExp : 5,  // 离线日志过期时间 ， 默认5天
     };
 
+    var Offline_DB = {
+        db : null,
+        buffer : [],
+        init : function (){
+                var self = this;
+                if(!window.indexedDB){
+                    _config.offlineLog = false;
+                }
+
+                if(this.db){
+                    return;
+                }
+                var version= 1;
+                var request=window.indexedDB.open("badjs" , version);
+                request.onerror=function(e){
+                    console.log("indexdb request error");
+                };
+                request.onsuccess=function(e){
+                    self.db = e.target.result;
+                    setTimeout(function (){
+                        self.addLogs(self.buffer);
+                        self.buffer = [];
+                    },500)
+
+                    setTimeout(function (){
+                       self.clearDB(_config.offlineLogExp );
+                    },1000)
+
+                };
+                request.onupgradeneeded=function(e){
+                    var db=e.target.result;
+                    if(!db.objectStoreNames.contains('logs')){
+                        db.createObjectStore('logs', { autoIncrement: true });
+                    }
+                };
+        },
+        insertToDB : function (log){
+            var store= this.getStore()
+            store.add(log);
+        },
+        addLog : function (log){
+            if(!this.db){
+                this.buffer.push(log);
+                return ;
+            }
+            this.insertToDB(log);
+        },
+        addLogs : function (logs){
+            if(!this.db){
+                this.buffer = buffer.concat(logs);
+                return
+            }
+
+            for(var i = 0;i <  this.buffer.length ; i++){
+                this.addLog( this.buffer[i])
+            }
+
+        },
+        clearDB : function (daysToMaintain){
+            if(!this.db){
+                return;
+            }
+
+            var store= this.getStore()
+
+            if (!daysToMaintain) {
+                store.clear();
+                return ;
+            }
+            var range = (Date.now() - (daysToMaintain || 2) * 24 * 3600 * 1000);
+            var request = store.openCursor();
+            request.onsuccess = function (event) {
+                var cursor = event.target.result;
+                if (cursor && (cursor.value.time < range || !cursor.value.time)) {
+                    store.delete(cursor.primaryKey);
+                    cursor.continue();
+                }
+            }
+        },
+
+        getStore: function (){
+            var transaction=this.db.transaction("logs",'readwrite');
+            return transaction.objectStore("logs");
+        }
+    }
+
     var T = {
         isOBJByType: function (o, type) {
             return Object.prototype.toString.call(o) === "[object " + (type || "Object") + "]";
@@ -160,18 +246,9 @@ var BJ_REPORT = (function(global) {
 
 
     var _offline_id  = "";
-    var _offline_log_list  = [];
-    var _offline_timeoutId ;
     var _save2Offline = function(key , msgObj ) {
-
-        msgObj  = T.extend({} , msgObj);
-        msgObj.date = new Date -0;
-        _offline_log_list.push(msgObj);
-
-        clearTimeout(_offline_timeoutId);
-        _offline_timeoutId = setTimeout(function (){
-            localStorage.setItem(_offline_id , JSON.stringify(_offline_log_list)) ;
-        },5000);
+        msgObj  = T.extend({id : _config.id , uin : _config.uin , time : new Date - 0} , msgObj);
+        Offline_DB.addLog(msgObj)
     };
 
 
@@ -342,24 +419,7 @@ var BJ_REPORT = (function(global) {
             }
 
             // init offline
-            if(!localStorage){
-                _config.offlineLog = false;
-            }
-            _offline_id =  "badjs_" + _config.id + _config.uin;
-            try{
-                _offline_log_list = JSON.parse(localStorage.getItem(_offline_id));
-            }catch(e){
-            }
-            if(!T.isOBJByType(_offline_log_list, "Array")){
-                _offline_log_list = [];
-            }
-
-            var newArray = [] ,nowDate = new Date - 0 ;
-            for (var i = 0 ; i < _offline_log_list.length ; i ++){
-                if (nowDate  - _offline_log_list[i].date < _config.offlineLogExp *  86400000){
-                    newArray.push(_offline_log_list[i]);
-                }
-            }
+            Offline_DB.init()
 
 
             return report;

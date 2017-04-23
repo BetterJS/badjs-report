@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script>
+
+    var myDB={
+        name:'badjs',
+        version:4,
+        db:null
+    };
+    function openDB (name,version) {
+        var version=version || 1;
+        var request=window.indexedDB.open(name , version);
+        request.onerror=function(e){
+            console.log(e.currentTarget.error.message);
+        };
+        request.onsuccess=function(e){
+            console.log(111);
+            myDB.db=e.target.result;
+        };
+        request.onupgradeneeded=function(e){
+            var db=e.target.result;
+            if(!db.objectStoreNames.contains('students')){
+                db.createObjectStore('logs', { autoIncrement: true });
+            }
+        };
+    }
+
+    var students=[{
+        id:1001,
+        name:"Byron",
+        age:24
+    },{
+        id:1002,
+        name:"Frank",
+        age:30
+    },{
+        id:1003,
+        name:"Aaron",
+        age:26
+    }];
+
+    function addData(db,storeName){
+        var transaction=db.transaction(storeName,'readwrite');
+        var store=transaction.objectStore(storeName);
+
+        for(var i=0;i<students.length;i++){
+            store.add(students[i]);
+        }
+    }
+
+
+    openDB(myDB.name,myDB.version);
+
+    function closeDB(db){
+        db.close();
+    }
+
+    function deleteDB(name){
+        indexedDB.deleteDatabase(name);
+    }
+
+    /*setTimeout(function(){
+        addData(myDB.db,'students');
+    },1000);*/
+    setTimeout(function(){
+        closeDB(myDB.db);
+        deleteDB(myDB.name);
+    },2000);
+</script>
+</body>
+</html>
