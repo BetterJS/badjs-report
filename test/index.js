@@ -8,10 +8,10 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
 
         // close repeat
         BJ_REPORT.init({
-            repeat: 1e10
+            repeat: 10000
         });
 
-        it('one report , not combo  ', function(done) {
+     /*   it('one report , not combo  ', function(done) {
             BJ_REPORT.init({
                 id: 1,
                 url: "http://test.qq.com/report",
@@ -21,11 +21,11 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
                     done();
                 }
             });
-            BJ_REPORT.report("errorTest");
-        });
+            BJ_REPORT.report("errorTest", true);
+        });*/
 
 
-        it('one info , not combo  ', function(done) {
+ /*       it('one info , not combo  ', function(done) {
             BJ_REPORT.init({
                 id: 1,
                 url: "http://test.qq.com/report",
@@ -37,10 +37,10 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
                 }
             });
             BJ_REPORT.info("errorTest");
-        });
+        });*/
 
 
-        it('one debug , not combo  ', function(done) {
+       /* it('one debug , not combo  ', function(done) {
             BJ_REPORT.init({
                 id: 1,
                 url: "http://test.qq.com/report",
@@ -52,10 +52,10 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
                 }
             });
             BJ_REPORT.debug("errorTest");
-        });
+        });*/
 
 
-        it('three report , not combo  ', function(done) {
+      /*  it('three report , not combo  ', function(done) {
             var count = 3;
             BJ_REPORT.init({
                 id: 1,
@@ -88,10 +88,10 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             });
             BJ_REPORT.push("errorTest1");
             BJ_REPORT.push("errorTest2");
-            BJ_REPORT.report("errorTest3");
-            BJ_REPORT.report("errorTest3");
+            BJ_REPORT.report("errorTest3", true);
+            BJ_REPORT.report("errorTest3", true);
         });
-
+*/
         it('combo report , use push and report ', function(done) {
 
             BJ_REPORT.init({
@@ -116,7 +116,7 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             BJ_REPORT.push("errorTest1");
             BJ_REPORT.push("errorTest2");
             BJ_REPORT.push("errorTest3");
-            BJ_REPORT.report("errorTest4");
+            BJ_REPORT.report("errorTest4", true);
         });
 
 
@@ -134,7 +134,7 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
                 }
             });
             BJ_REPORT.__onerror__("msg", 0, 0, null);
-            BJ_REPORT.report();
+            BJ_REPORT.report(null , true);
 
             setTimeout(function() {
                 should.equal(count, 1);
@@ -160,7 +160,7 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
                     count++;
                 }
             });
-            BJ_REPORT.report("errorTest4");
+            BJ_REPORT.report("errorTest4", true);
         });
 
 
@@ -197,7 +197,7 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             });
             BJ_REPORT.push("ignore");
             BJ_REPORT.push("pass");
-            BJ_REPORT.report("ignore2");
+            BJ_REPORT.report("ignore2", true);
         });
 
 
@@ -227,7 +227,7 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             });
             BJ_REPORT.push("pass");
             BJ_REPORT.push("pass");
-            BJ_REPORT.report("pass");
+            BJ_REPORT.report("pass", true);
         });
 
 
@@ -275,7 +275,7 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             BJ_REPORT.push('repeatTest');
             BJ_REPORT.push('repeatTest');
             BJ_REPORT.push('repeatTest');
-            BJ_REPORT.report('repeatTest');
+            BJ_REPORT.report('repeatTest' , true);
         });
     });
 

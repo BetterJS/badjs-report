@@ -8,37 +8,96 @@
 var BJ_REPORT = (function(global) {
     if (global.BJ_REPORT) return global.BJ_REPORT;
 
-    var _error = [];
-    var _error_map = {};
+    var _log_list = [];
+    var _log_map = {};
     var _config = {
         id: 0, // 上报 id
         uin: 0, // user id
         url: "", // 上报 接口
-        combo: 1, // 是否合并 !0-合并 0-不合并
         ext: null, // 扩展参数 用于自定义上报
         level: 4, // 错误级别 1-debug 2-info 4-error
         ignore: [], // 忽略某个错误, 支持 Regexp 和 Function
         random: 1, // 抽样 (0-1] 1-全量
         delay: 1000, // 延迟上报 combo 为 true 时有效
         submit: null, // 自定义上报方式
-        repeat: 5 // 重复上报次数(对于同一个错误超过多少次不上报)
+        repeat: 5 , // 重复上报次数(对于同一个错误超过多少次不上报),
+        offlineLog : true,
+        offlineLogExp : 5,  // 离线日志过期时间 ， 默认5天
     };
 
-    var _isOBJByType = function(o, type) {
-        return Object.prototype.toString.call(o) === "[object " + (type || "Object") + "]";
-    };
+    var T = {
+        isOBJByType: function (o, type) {
+            return Object.prototype.toString.call(o) === "[object " + (type || "Object") + "]";
+        },
 
-    var _isOBJ = function(obj) {
-        var type = typeof obj;
-        return type === "object" && !!obj;
-    };
+        isOBJ: function (obj) {
+            var type = typeof obj;
+            return type === "object" && !!obj;
+        },
+        isEmpty: function (obj) {
+            if (obj === null) return true;
+            if (T.isOBJByType(obj, "Number")) {
+                return false;
+            }
+            return !obj;
+        },
+        extend : function (src , source){
+            for(var key in source){
+                src[key] = source[key];
+            }
+            return src;
+        },
+        processError: function (errObj) {
+            try {
+                if (errObj.stack) {
+                    var url = errObj.stack.match("https?://[^\n]+");
+                    url = url ? url[0] : "";
+                    var rowCols = url.match(":(\\d+):(\\d+)");
+                    if (!rowCols) {
+                        rowCols = [0, 0, 0];
+                    }
 
-    var _isEmpty = function(obj) {
-        if (obj === null) return true;
-        if (_isOBJByType(obj, "Number")) {
-            return false;
+                    var stack = T.processStackMsg(errObj);
+                    return {
+                        msg: stack,
+                        rowNum: rowCols[1],
+                        colNum: rowCols[2],
+                        target: url.replace(rowCols[0], "")
+                    };
+                } else {
+                    //ie 独有 error 对象信息，try-catch 捕获到错误信息传过来，造成没有msg
+                    if (errObj.name && errObj.message && errObj.description) {
+                        return {
+                            msg: JSON.stringify(errObj)
+                        };
+                    }
+                    return errObj;
+                }
+            } catch (err) {
+                return errObj;
+            }
+        },
+
+        processStackMsg: function (error) {
+            var stack = error.stack
+                .replace(/\n/gi, "")
+                .split(/\bat\b/)
+                .slice(0, 9)
+                .join("@")
+                .replace(/\?[^:]+/gi, "");
+            var msg = error.toString();
+            if (stack.indexOf(msg) < 0) {
+                stack = msg + "@" + stack;
+            }
+            return stack;
+        },
+
+        isRepeat : function(error) {
+            if (!T.isOBJ(error)) return true;
+            var msg = error.msg;
+            var times = _log_map[msg] = (parseInt(_log_map[msg], 10) || 0) + 1;
+            return times > _config.repeat;
         }
-        return !obj;
     };
 
     var orgError = global.onerror;
@@ -47,10 +106,10 @@ var BJ_REPORT = (function(global) {
         var newMsg = msg;
 
         if (error && error.stack) {
-            newMsg = _processStackMsg(error);
+            newMsg = T.processStackMsg(error);
         }
 
-        if (_isOBJByType(newMsg, "Event")) {
+        if (T.isOBJByType(newMsg, "Event")) {
             newMsg += newMsg.type ?
                 ("--" + newMsg.type + "--" + (newMsg.target ?
                     (newMsg.target.tagName + "::" + newMsg.target.src) : "")) : "";
@@ -63,65 +122,22 @@ var BJ_REPORT = (function(global) {
             colNum: col
         });
 
-        _send();
+        _process_log();
         orgError && orgError.apply(global, arguments);
     };
 
-    var _processError = function(errObj) {
-        try {
-            if (errObj.stack) {
-                var url = errObj.stack.match("https?://[^\n]+");
-                url = url ? url[0] : "";
-                var rowCols = url.match(":(\\d+):(\\d+)");
-                if (!rowCols) {
-                    rowCols = [0, 0, 0];
-                }
 
-                var stack = _processStackMsg(errObj);
-                return {
-                    msg: stack,
-                    rowNum: rowCols[1],
-                    colNum: rowCols[2],
-                    target: url.replace(rowCols[0], "")
-                };
-            } else {
-                //ie 独有 error 对象信息，try-catch 捕获到错误信息传过来，造成没有msg
-                if (errObj.name && errObj.message && errObj.description) {
-                    return {
-                        msg: JSON.stringify(errObj)
-                    };
-                }
-                return errObj;
-            }
-        } catch (err) {
-            return errObj;
-        }
-    };
 
-    var _processStackMsg = function(error) {
-        var stack = error.stack
-            .replace(/\n/gi, "")
-            .split(/\bat\b/)
-            .slice(0, 9)
-            .join("@")
-            .replace(/\?[^:]+/gi, "");
-        var msg = error.toString();
-        if (stack.indexOf(msg) < 0) {
-            stack = msg + "@" + stack;
-        }
-        return stack;
-    };
-
-    var _error_tostring = function(error, index) {
+    var _report_log_tostring = function(error, index) {
         var param = [];
         var params = [];
         var stringify = [];
-        if (_isOBJ(error)) {
+        if (T.isOBJ(error)) {
             error.level = error.level || _config.level;
             for (var key in error) {
                 var value = error[key];
-                if (!_isEmpty(value)) {
-                    if (_isOBJ(value)) {
+                if (!T.isEmpty(value)) {
+                    if (T.isOBJ(value)) {
                         try {
                             value = JSON.stringify(value);
                         } catch (err) {
@@ -141,70 +157,76 @@ var BJ_REPORT = (function(global) {
         return [params.join("&"), stringify.join(","), param.join("&")];
     };
 
-    var _imgs = [];
-    var _submit = function(url) {
+
+
+    var _offline_id  = "";
+    var _offline_log_list  = [];
+    var _offline_timeoutId ;
+    var _save2Offline = function(key , msgObj ) {
+
+        msgObj  = T.extend({} , msgObj);
+        msgObj.date = new Date -0;
+        _offline_log_list.push(msgObj);
+
+        clearTimeout(_offline_timeoutId);
+        _offline_timeoutId = setTimeout(function (){
+            localStorage.setItem(_offline_id , JSON.stringify(_offline_log_list)) ;
+        },5000);
+    };
+
+
+
+    var submit_log_list = [];
+    var comboTimeout = 0;
+    var _submit_log = function() {
+        clearTimeout(comboTimeout);
+
+        var url =_config._reportUrl + submit_log_list.join("&") + "&count=" + submit_log_list.length + "&_t=" + (+new Date);
+
         if (_config.submit) {
             _config.submit(url);
         } else {
             var _img = new Image();
-            _imgs.push(_img);
             _img.src = url;
         }
+
+        comboTimeout = 0;
+        submit_log_list = [];
     };
 
-    var _is_repert = function(error) {
-        if (!_isOBJ(error)) return true;
-        var msg = error.msg;
-        var times = _error_map[msg] = (parseInt(_error_map[msg], 10) || 0) + 1;
-        return times > _config.repeat;
-    };
+    var _process_log = function(isReportNow) {
+        if (!_config._reportUrl) return;
 
-    var error_list = [];
-    var comboTimeout = 0;
-    var _send = function(isReoprtNow) {
-        if (!_config.report) return;
-
-        while (_error.length) {
+        while (_log_list.length) {
             var isIgnore = false;
-            var error = _error.shift();
+            var report_log = _log_list.shift();
             // 重复上报
-            if (_is_repert(error)) continue;
-            var error_str = _error_tostring(error, error_list.length);
-            if (_isOBJByType(_config.ignore, "Array")) {
+            if (T.isRepeat(report_log)) continue;
+            var log_str = _report_log_tostring(report_log, submit_log_list.length);
+            if (T.isOBJByType(_config.ignore, "Array")) {
                 for (var i = 0, l = _config.ignore.length; i < l; i++) {
                     var rule = _config.ignore[i];
-                    if ((_isOBJByType(rule, "RegExp") && rule.test(error_str[1])) ||
-                        (_isOBJByType(rule, "Function") && rule(error, error_str[1]))) {
+                    if ((T.isOBJByType(rule, "RegExp") && rule.test(log_str[1])) ||
+                        (T.isOBJByType(rule, "Function") && rule(report_log, log_str[1]))) {
                         isIgnore = true;
                         break;
                     }
                 }
             }
             if (!isIgnore) {
-                if (_config.combo) {
-                    error_list.push(error_str[0]);
-                } else {
-                    _submit(_config.report + error_str[2] + "&_t=" + (+new Date));
+                // not offline , submit
+                if(report_log.level != 20){
+                    submit_log_list.push(log_str[0]);
                 }
-                _config.onReport && (_config.onReport(_config.id, error));
+                _config.onReport && (_config.onReport(_config.id, report_log));
+                _config.offlineLog && _save2Offline( "badjs_" + _config.id + _config.uin, report_log );
             }
         }
 
-        // 合并上报
-        var count = error_list.length;
-        if (count) {
-            var comboReport = function() {
-                clearTimeout(comboTimeout);
-                _submit(_config.report + error_list.join("&") + "&count=" + error_list.length + "&_t=" + (+new Date));
-                comboTimeout = 0;
-                error_list = [];
-            };
-
-            if (isReoprtNow) {
-                comboReport(); // 立即上报
-            } else if (!comboTimeout) {
-                comboTimeout = setTimeout(comboReport, _config.delay); // 延迟上报
-            }
+        if (isReportNow) {
+            _submit_log(); // 立即上报
+        } else if (!comboTimeout) {
+            comboTimeout = setTimeout(_submit_log, _config.delay); // 延迟上报
         }
     };
 
@@ -215,7 +237,7 @@ var BJ_REPORT = (function(global) {
                 return report;
             }
 
-            var data = _isOBJ(msg) ? _processError(msg) : {
+            var data = T.isOBJ(msg) ? T.processError(msg) : {
                 msg: msg
             };
 
@@ -228,20 +250,21 @@ var BJ_REPORT = (function(global) {
             if (!data.from) {
                 data.from = location.href;
             }
-            _error.push(data);
-            _send();
+            _log_list.push(data);
+            _process_log();
             return report;
         },
-        report: function(msg) { // error report
+        report: function(msg , isReportNow) { // error report
             msg && report.push(msg);
-            _send(true);
+
+            isReportNow && _process_log(true);
             return report;
         },
         info: function(msg) { // info report
             if (!msg) {
                 return report;
             }
-            if (_isOBJ(msg)) {
+            if (T.isOBJ(msg)) {
                 msg.level = 2;
             } else {
                 msg = {
@@ -256,7 +279,7 @@ var BJ_REPORT = (function(global) {
             if (!msg) {
                 return report;
             }
-            if (_isOBJ(msg)) {
+            if (T.isOBJ(msg)) {
                 msg.level = 1;
             } else {
                 msg = {
@@ -267,8 +290,27 @@ var BJ_REPORT = (function(global) {
             report.push(msg);
             return report;
         },
+
+        reportOfflinelog : function (){
+
+        },
+        offlinelog : function (msg){
+            if (!msg) {
+                return report;
+            }
+            if (T.isOBJ(msg)) {
+                msg.level = 20;
+            } else {
+                msg = {
+                    msg: msg,
+                    level: 20
+                };
+            }
+            report.push(msg);
+            return report;
+        },
         init: function(config) { // 初始化
-            if (_isOBJ(config)) {
+            if (T.isOBJ(config)) {
                 for (var key in config) {
                     _config[key] = config[key];
                 }
@@ -287,7 +329,7 @@ var BJ_REPORT = (function(global) {
                     }
                 }
 
-                _config.report = (_config.url || "/badjs") +
+                _config._reportUrl = (_config.url || "/badjs") +
                     "?id=" + id +
                     "&uin=" + _config.uin +
                     // "&from=" + encodeURIComponent(location.href) +
@@ -295,9 +337,31 @@ var BJ_REPORT = (function(global) {
             }
 
             // if had error in cache , report now
-            if (_error.length) {
-                _send();
+            if (_log_list.length) {
+                _process_log();
             }
+
+            // init offline
+            if(!localStorage){
+                _config.offlineLog = false;
+            }
+            _offline_id =  "badjs_" + _config.id + _config.uin;
+            try{
+                _offline_log_list = JSON.parse(localStorage.getItem(_offline_id));
+            }catch(e){
+            }
+            if(!T.isOBJByType(_offline_log_list, "Array")){
+                _offline_log_list = [];
+            }
+
+            var newArray = [] ,nowDate = new Date - 0 ;
+            for (var i = 0 ; i < _offline_log_list.length ; i ++){
+                if (nowDate  - _offline_log_list[i].date < _config.offlineLogExp *  86400000){
+                    newArray.push(_offline_log_list[i]);
+                }
+            }
+
+
             return report;
         },
 
