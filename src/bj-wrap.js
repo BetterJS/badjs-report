@@ -97,8 +97,15 @@
             var arg, tmp, args = [];
             for (var i = 0, l = arguments.length; i < l; i++) {
                 arg = arguments[i];
-                _isFunction(arg) && (tmp = cat(arg)) &&
-                    (arg.tryWrap = tmp) && (arg = tmp);
+                if(_isFunction(arg)){
+                    if(arg.tryWrap){
+                        arg = arg.tryWrap;
+                    }else {
+                        tmp = cat(arg);
+                        arg.tryWrap = tmp;
+                        arg = tmp;
+                    }
+                }
                 args.push(arg);
             }
             return foo.apply(self || this, args);

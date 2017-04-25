@@ -14,6 +14,7 @@ var BJ_REPORT = (function(global) {
         id: 0, // 上报 id
         uin: 0, // user id
         url: "", // 上报 接口
+        offline_url: "", // 离线日志上报 接口
         ext: null, // 扩展参数 用于自定义上报
         level: 4, // 错误级别 1-debug 2-info 4-error
         ignore: [], // 忽略某个错误, 支持 Regexp 和 Function
@@ -27,31 +28,32 @@ var BJ_REPORT = (function(global) {
 
     var Offline_DB = {
         db : null,
-        buffer : [],
-        init : function (){
+        ready : function (callback){
                 var self = this;
                 if(!window.indexedDB){
                     _config.offlineLog = false;
                 }
 
                 if(this.db){
+                    setTimeout(function (){
+                        callback(null , self );
+                    },0);
+
                     return;
                 }
                 var version= 1;
                 var request=window.indexedDB.open("badjs" , version);
                 request.onerror=function(e){
+                    callback(e);
                     console.log("indexdb request error");
                 };
                 request.onsuccess=function(e){
                     self.db = e.target.result;
-                    setTimeout(function (){
-                        self.addLogs(self.buffer);
-                        self.buffer = [];
-                    },500)
 
                     setTimeout(function (){
-                       self.clearDB(_config.offlineLogExp );
-                    },1000)
+                        callback(null , self);
+                    },500);
+
 
                 };
                 request.onupgradeneeded=function(e){
@@ -62,34 +64,54 @@ var BJ_REPORT = (function(global) {
                 };
         },
         insertToDB : function (log){
-            var store= this.getStore()
+            var store= this.getStore();
             store.add(log);
         },
         addLog : function (log){
             if(!this.db){
-                this.buffer.push(log);
                 return ;
             }
             this.insertToDB(log);
         },
         addLogs : function (logs){
             if(!this.db){
-                this.buffer = buffer.concat(logs);
-                return
+                return;
             }
 
-            for(var i = 0;i <  this.buffer.length ; i++){
-                this.addLog( this.buffer[i])
+            for(var i = 0;i <  logs.length ; i++){
+                this.addLog( logs[i]);
             }
 
+        },
+        getLogs : function (opt  , callback ){
+            if(!this.db){
+                return;
+            }
+            var store= this.getStore();
+            var request = store.openCursor();
+            var result = [];
+            request.onsuccess = function (event) {
+                var cursor = event.target.result;
+                if (cursor ) {
+                    if(cursor.value.time >= opt.start && cursor.value.time <= opt.end &&   cursor.value.id ==  opt.id && cursor.value.uin == opt.uin){
+                        result.push(cursor.value);
+                    }
+                    cursor.continue();
+                }else {
+                    callback(null , result);
+                }
+            };
+
+            request.onerror = function (e){
+                callback(e);
+            };
         },
         clearDB : function (daysToMaintain){
             if(!this.db){
                 return;
             }
 
-            var store= this.getStore()
-
+            var store= this.getStore();
             if (!daysToMaintain) {
                 store.clear();
                 return ;
@@ -102,14 +124,14 @@ var BJ_REPORT = (function(global) {
                     store.delete(cursor.primaryKey);
                     cursor.continue();
                 }
-            }
+            };
         },
 
         getStore: function (){
             var transaction=this.db.transaction("logs",'readwrite');
             return transaction.objectStore("logs");
         }
-    }
+    };
 
     var T = {
         isOBJByType: function (o, type) {
@@ -245,10 +267,28 @@ var BJ_REPORT = (function(global) {
 
 
 
-    var _offline_id  = "";
+    var  _offline_buffer = [];
     var _save2Offline = function(key , msgObj ) {
         msgObj  = T.extend({id : _config.id , uin : _config.uin , time : new Date - 0} , msgObj);
-        Offline_DB.addLog(msgObj)
+
+        if(Offline_DB.db){
+            Offline_DB.addLog(msgObj);
+            return ;
+        }
+
+
+        if(!Offline_DB.db && !_offline_buffer.length){
+            Offline_DB.ready(function (err , DB){
+                if(DB){
+                    if(_offline_buffer.length){
+                        DB.addLogs(_offline_buffer);
+                        _offline_buffer = [];
+                    }
+
+                }
+            });
+        }
+        _offline_buffer.push(msgObj);
     };
 
 
@@ -306,6 +346,8 @@ var BJ_REPORT = (function(global) {
             comboTimeout = setTimeout(_submit_log, _config.delay); // 延迟上报
         }
     };
+
+
 
     var report = global.BJ_REPORT = {
         push: function(msg) { // 将错误推到缓存池
@@ -369,7 +411,52 @@ var BJ_REPORT = (function(global) {
         },
 
         reportOfflinelog : function (){
+            Offline_DB.ready(function (err , DB){
+                if(!DB){
+                    return;
+                }
+                var startDate = new Date - 0 - _config.offlineLogExp* 24 * 3600 * 1000;
+                var endDate = new Date - 0;
+                DB.getLogs( {
+                    start : startDate,
+                    end : endDate,
+                    id :  _config.id ,
+                    uin :  _config.uin
+                } , function (err , result){
+                    var iframe = document.createElement("iframe");
+                    iframe.name = "badjs_offline_"+(new Date -0 );
+                    iframe.frameborder = 0;
+                    iframe.height = 0;
+                    iframe.width = 0;
+                    iframe.src = "javascript:false;";
 
+                    iframe.onload = function (){
+                        var form = document.createElement("form");
+                        form.style.display = "none";
+                        form.target =  iframe.name ;
+                        form.method = "POST";
+                        form.action = _config.offline_url || _config.url.replace(/badjs$/ , "offlineLog");
+                        form.enctype.method = 'multipart/form-data';
+
+                        var input = document.createElement("input");
+                        input.style.display = "none";
+                        input.type = "hidden";
+                        input.name = "offline_log";
+                        input.value = JSON.stringify({logs : result , userAgent : navigator.userAgent , startDate : startDate , endDate : endDate , id :_config.id , uin:_config.uin});
+
+                        iframe.contentDocument.body.appendChild(form);
+                        form.appendChild(input);
+                        form.submit();
+
+                        setTimeout(function (){
+                            document.body.removeChild(iframe);
+                        },10000);
+
+                        iframe.onload = null;
+                    };
+                    document.body.appendChild(iframe);
+                });
+            });
         },
         offlinelog : function (msg){
             if (!msg) {
@@ -419,7 +506,13 @@ var BJ_REPORT = (function(global) {
             }
 
             // init offline
-            Offline_DB.init()
+            Offline_DB.ready(function (err , DB){
+                if(DB){
+                    setTimeout(function (){
+                        DB.clearDB(_config.offlineLogExp );
+                    },1000);
+                }
+            });
 
 
             return report;
