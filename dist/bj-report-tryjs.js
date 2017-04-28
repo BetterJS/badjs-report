@@ -15,6 +15,7 @@ var BJ_REPORT = (function(global) {
         uin: 0, // user id
         url: "", // 上报 接口
         offline_url: "", // 离线日志上报 接口
+        offline_auto_url: "", // 检测是否自动上报
         ext: null, // 扩展参数 用于自定义上报
         level: 4, // 错误级别 1-debug 2-info 4-error
         ignore: [], // 忽略某个错误, 支持 Regexp 和 Function
