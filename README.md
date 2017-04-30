@@ -88,7 +88,7 @@ BJ_REPORT.report();
 BJ_REPORT.reportOfflineLog();
 ```
 
-> 什么是离线日志？[#25](https://github.com/BetterJS/badjs-report/issues/25)
+> 什么是离线日志？ [#25](https://github.com/BetterJS/badjs-report/issues/25)
 
 #####  用法
 ```javascript
