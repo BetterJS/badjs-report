@@ -96,7 +96,7 @@ BJ_REPORT.init({id: 1}).push("error msg").report("error msg 2");
 ```javascript
 BJ_REPORT.info("info"); // 用户记录日志
 ```
-<br/>
+
 #####  debug 上报
 ```javascript
 BJ_REPORT.debug("debug");  //可以结合实时上报，跟踪问题; 不存入存储
