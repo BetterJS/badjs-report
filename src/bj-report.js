@@ -295,11 +295,11 @@ var BJ_REPORT = (function(global) {
     };
 
     var _autoReportOffline = function (){
-        var script = document.createElement("script")
+        var script = document.createElement("script");
         script.src = _config.offline_auto_url || _config.url.replace(/badjs$/ , "offlineAuto") + "?id="+_config.id + "&uin="+_config.uin;
         window._badjsOfflineAuto = function (isReport){
             if(isReport){
-                BJ_REPORT.reportOfflineLog()
+                BJ_REPORT.reportOfflineLog();
             }
         }
         document.head.appendChild(script);
@@ -526,7 +526,7 @@ var BJ_REPORT = (function(global) {
                         DB.clearDB(_config.offlineLogExp );
                         setTimeout(function (){
                             _config.offlineLogAuto && _autoReportOffline()
-                        },5000)
+                        },5000);
                     },1000);
                 }
 
