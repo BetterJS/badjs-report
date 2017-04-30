@@ -82,24 +82,27 @@ BJ_REPORT.report();
 
 ```
 
-#####  上报离线日志    [#什么是离线日志](https://github.com/BetterJS/badjs-report/issues/25)
+#####  上报离线日志    [什么是离线日志](https://github.com/BetterJS/badjs-report/issues/25)
 ```javascript
 BJ_REPORT.reportOfflineLog();
 ```
 
 #####  用法
 ```javascript
-//初始化及上报
-BJ_REPORT.init({id: 1}).push("error msg").report("error msg 2");
+//初始化
+BJ_REPORT.init({id: 1})
+
+//主动上报错误日志
+BJ_REPORT.report("error msg 2");
 
 //info上报，用于记录操作日志
-BJ_REPORT.info("info"); // 用户记录日志
+BJ_REPORT.info("info"); 
 
 //可以结合实时上报，跟踪问题; 不存入存储
 BJ_REPORT.debug("debug");  
 
-//记录离线日志  [#什么是离线日志](https://github.com/BetterJS/badjs-report/issues/25)
-BJ_REPORT.offlineLog("offlineLog");  //记录离线日志
+//记录离线日志  
+BJ_REPORT.offlineLog("offlineLog");  
 ```
 <br/>
 
