@@ -41,7 +41,9 @@ BJ_REPORT.init({
                                         // 避免出现单个用户同一错误上报过多的情况
   onReport: function(id, errObj){},     // 当上报的时候回调。 id: 上报的 id, errObj: 错误的对象
   submit,                               // 覆盖原来的上报方式，可以自行修改为 post 上报等
-  ext: {}                               // 扩展属性，后端做扩展处理属性。例如：存在 msid 就会分发到 monitor
+  ext: {}                               // 扩展属性，后端做扩展处理属性。例如：存在 msid 就会分发到 monitor,
+  offlineLog : true,                    // 是不开启离线日志[默认是]
+  offlineLogExp : 5,                    // 离线有效时间，默认最近5天
 });
 ```
 BJ_Report 是重写了 window.onerror 进行上报的，无需编写任何捕获错误的代码
@@ -78,9 +80,13 @@ BJ_REPORT.push({
 BJ_REPORT.report();
 
 ```
-当 combo = 1 时候的， 调用 report ，根据缓冲池中的数据一条条上报;<br/>
-当 combo = 0 时候的， 会延迟 delay 毫秒，再合并上报
 <br/>
+#####  上报离线日志
+```javascript
+BJ_REPORT.reportOfflineLog();
+```
+<br/>
+
 #####  可以链式调用
 ```javascript
 BJ_REPORT.init({id: 1}).push("error msg").report("error msg 2");
@@ -95,6 +101,12 @@ BJ_REPORT.info("info"); // 用户记录日志
 ```javascript
 BJ_REPORT.debug("debug");  //可以结合实时上报，跟踪问题; 不存入存储
 ```
+
+#####  offlineLog 上报
+```javascript
+BJ_REPORT.offlineLog("offlineLog");  //记录离线日志
+```
+
 <br/>
 <br/>
 ### 高级用法
@@ -141,9 +153,14 @@ BJ_REPORT.tryJs().spyAll();
 ```
 
 ## update log
+
+##### v1.3
+1. 支持离线日志
+2. 支持上报日志
+3. 支持自动上报离线日志
+
 ##### v1.2.3
 1. BUGFIX
-
 
 ##### v1.2.1
 1. 增加去除重复参数
