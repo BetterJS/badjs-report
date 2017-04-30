@@ -301,9 +301,9 @@ var BJ_REPORT = (function(global) {
             if(isReport){
                 BJ_REPORT.reportOfflineLog();
             }
-        }
+        };
         document.head.appendChild(script);
-    }
+    };
 
 
 
@@ -525,7 +525,7 @@ var BJ_REPORT = (function(global) {
                     setTimeout(function (){
                         DB.clearDB(_config.offlineLogExp );
                         setTimeout(function (){
-                            _config.offlineLogAuto && _autoReportOffline()
+                            _config.offlineLogAuto && _autoReportOffline();
                         },5000);
                     },1000);
                 }
