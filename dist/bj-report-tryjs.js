@@ -25,6 +25,7 @@ var BJ_REPORT = (function(global) {
         repeat: 5 , // 重复上报次数(对于同一个错误超过多少次不上报),
         offlineLog : true,
         offlineLogExp : 5,  // 离线日志过期时间 ， 默认5天
+        offlineLogAuto : true,  //是否自动询问服务器需要自动上报
     };
 
     var Offline_DB = {
@@ -131,7 +132,8 @@ var BJ_REPORT = (function(global) {
         getStore: function (){
             var transaction=this.db.transaction("logs",'readwrite');
             return transaction.objectStore("logs");
-        }
+        },
+
     };
 
     var T = {
@@ -292,6 +294,17 @@ var BJ_REPORT = (function(global) {
         _offline_buffer.push(msgObj);
     };
 
+    var _autoReportOffline = function (){
+        var script = document.createElement("script");
+        script.src = _config.offline_auto_url || _config.url.replace(/badjs$/ , "offlineAuto") + "?id="+_config.id + "&uin="+_config.uin;
+        window._badjsOfflineAuto = function (isReport){
+            if(isReport){
+                BJ_REPORT.reportOfflineLog();
+            }
+        };
+        document.head.appendChild(script);
+    };
+
 
 
     var submit_log_list = [];
@@ -411,7 +424,7 @@ var BJ_REPORT = (function(global) {
             return report;
         },
 
-        reportOfflinelog : function (){
+        reportOfflineLog : function (){
             Offline_DB.ready(function (err , DB){
                 if(!DB){
                     return;
@@ -459,7 +472,7 @@ var BJ_REPORT = (function(global) {
                 });
             });
         },
-        offlinelog : function (msg){
+        offlineLog : function (msg){
             if (!msg) {
                 return report;
             }
@@ -511,8 +524,12 @@ var BJ_REPORT = (function(global) {
                 if(DB){
                     setTimeout(function (){
                         DB.clearDB(_config.offlineLogExp );
+                        setTimeout(function (){
+                            _config.offlineLogAuto && _autoReportOffline();
+                        },5000);
                     },1000);
                 }
+
             });
 
 
