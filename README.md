@@ -47,7 +47,8 @@ BJ_REPORT.init({
 });
 ```
 BJ_Report 是重写了 window.onerror 进行上报的，无需编写任何捕获错误的代码
-<br/>
+
+
 #####  手动上报
 ```javascript
 BJ_REPORT.report("error msg");
@@ -65,7 +66,7 @@ try{
     BJ_REPORT.report(e);
 }
 ```
-<br/>
+
 #####  延迟上报
 ```javascript
 BJ_REPORT.push("error msg");
@@ -81,6 +82,7 @@ BJ_REPORT.report();
 
 ```
 <br/>
+
 #####  上报离线日志
 ```javascript
 BJ_REPORT.reportOfflineLog();
@@ -91,12 +93,12 @@ BJ_REPORT.reportOfflineLog();
 ```javascript
 BJ_REPORT.init({id: 1}).push("error msg").report("error msg 2");
 ```
-
+<br/>
 #####  info 上报
 ```javascript
 BJ_REPORT.info("info"); // 用户记录日志
 ```
-
+<br/>
 #####  debug 上报
 ```javascript
 BJ_REPORT.debug("debug");  //可以结合实时上报，跟踪问题; 不存入存储
@@ -106,8 +108,6 @@ BJ_REPORT.debug("debug");  //可以结合实时上报，跟踪问题; 不存入�
 ```javascript
 BJ_REPORT.offlineLog("offlineLog");  //记录离线日志
 ```
-
-<br/>
 <br/>
 ### 高级用法
 >script error  的错误，怎么解决？  [#3](https://github.com/BetterJS/badjs-report/issues/3)
