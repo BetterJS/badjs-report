@@ -1,4 +1,4 @@
-badjs-report -- 前端异常捕获与上报
+badjs-report -- 前端异常捕获与日志上报
 ---
 
 [![Build Status](https://travis-ci.org/BetterJS/badjs-report.svg?branch=master)](https://travis-ci.org/BetterJS/badjs-report)
@@ -82,10 +82,13 @@ BJ_REPORT.report();
 
 ```
 
-#####  上报离线日志    [什么是离线日志](https://github.com/BetterJS/badjs-report/issues/25)
+#####  上报离线日志   
+
 ```javascript
 BJ_REPORT.reportOfflineLog();
 ```
+
+[**什么是离线日志**](https://github.com/BetterJS/badjs-report/issues/25)
 
 #####  用法
 ```javascript
