@@ -4,7 +4,7 @@ badjs-report -- 前端异常捕获与上报
 [![Build Status](https://travis-ci.org/BetterJS/badjs-report.svg?branch=master)](https://travis-ci.org/BetterJS/badjs-report)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/BetterJS?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
 ## Author
-[yorts52](https://github.com/yorts52) [caihuiji](https://github.com/caihuiji)
+[caihuiji](https://github.com/caihuiji) [yorts52](https://github.com/yorts52) 
 
 ## Install
 
