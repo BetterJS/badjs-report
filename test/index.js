@@ -11,88 +11,8 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             repeat: 10000
         });
 
-     /*   it('one report , not combo  ', function(done) {
-            BJ_REPORT.init({
-                id: 1,
-                url: "http://test.qq.com/report",
-                combo: 0,
-                submit: function(url) {
-                    should.not.equal(url.indexOf("errorTest"), -1);
-                    done();
-                }
-            });
-            BJ_REPORT.report("errorTest", true);
-        });*/
 
-
- /*       it('one info , not combo  ', function(done) {
-            BJ_REPORT.init({
-                id: 1,
-                url: "http://test.qq.com/report",
-                combo: 0,
-                submit: function(url) {
-                    should.not.equal(url.indexOf("errorTest"), -1);
-                    should.equal(url.indexOf("level=2") > -1, true);
-                    done();
-                }
-            });
-            BJ_REPORT.info("errorTest");
-        });*/
-
-
-       /* it('one debug , not combo  ', function(done) {
-            BJ_REPORT.init({
-                id: 1,
-                url: "http://test.qq.com/report",
-                combo: 0,
-                submit: function(url) {
-                    should.not.equal(url.indexOf("errorTest"), -1);
-                    should.equal(url.indexOf("level=1") > -1, true);
-                    done();
-                }
-            });
-            BJ_REPORT.debug("errorTest");
-        });*/
-
-
-      /*  it('three report , not combo  ', function(done) {
-            var count = 3;
-            BJ_REPORT.init({
-                id: 1,
-                url: "http://test.qq.com/report",
-                combo: 0,
-                submit: function(url) {
-
-                    if (count == 3) {
-                        should.not.equal(url.indexOf("errorTest1"), -1);
-                        should.equal(url.indexOf("errorTest2"), -1);
-                        should.equal(url.indexOf("errorTest3"), -1);
-                    }
-
-                    if (count == 2) {
-                        should.equal(url.indexOf("errorTest1"), -1);
-                        should.not.equal(url.indexOf("errorTest2"), -1);
-                        should.equal(url.indexOf("errorTest3"), -1);
-                    }
-
-                    if (count == 1) {
-                        should.equal(url.indexOf("errorTest1"), -1);
-                        should.equal(url.indexOf("errorTest2"), -1);
-                        should.not.equal(url.indexOf("errorTest3"), -1);
-                        done();
-                    }
-
-                    --count;
-
-                }
-            });
-            BJ_REPORT.push("errorTest1");
-            BJ_REPORT.push("errorTest2");
-            BJ_REPORT.report("errorTest3", true);
-            BJ_REPORT.report("errorTest3", true);
-        });
-*/
-        it('combo report , use push and report ', function(done) {
+        it(' use push and report ', function(done) {
 
             BJ_REPORT.init({
                 id: 1,
@@ -120,13 +40,12 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
         });
 
 
-        it('combo report , onerror and report ', function(done) {
+        it(' onerror and report ', function(done) {
 
             var count = 0;
             BJ_REPORT.init({
                 id: 1,
                 url: "http://test.qq.com/report",
-                combo: 1,
                 delay: 200,
                 submit: function(url) {
                     count++;
@@ -149,7 +68,6 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             BJ_REPORT.init({
                 id: 1,
                 url: "http://test.qq.com/report",
-                combo: 1,
                 delay: 200,
                 submit: function(url) {
                     count++;
@@ -170,7 +88,6 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             BJ_REPORT.init({
                 id: 1,
                 url: "http://test.qq.com/report",
-                combo: 1,
                 delay: 200,
                 ignore: [
                     /ignore/gi,
@@ -206,7 +123,6 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             BJ_REPORT.init({
                 id: 1,
                 url: "http://test.qq.com/report",
-                combo: 1,
                 delay: 200,
                 ignore: [
                     /ignore/gi,
@@ -236,7 +152,6 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             BJ_REPORT.init({
                 id: 1,
                 url: "http://test.qq.com/report",
-                combo: 1,
                 delay: 200,
                 submit: function(url) {
                     var match1 = url.indexOf("ReferenceError");
@@ -258,7 +173,6 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             BJ_REPORT.init({
                 id: 1,
                 url: "http://test.qq.com/report",
-                combo: 1,
                 delay: 1000,
                 repeat: 1,
                 submit: function(url) {
@@ -291,7 +205,6 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             spyCustomFun = BJ_REPORT.init({
                 id: 1,
                 url: "http://test.qq.com/report",
-                combo: 1,
                 delay: 200,
                 submit: function(url) {
                     var match1 = url.indexOf("errorTest1");
@@ -324,7 +237,6 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             BJ_REPORT.init({
                 id: 1,
                 url: "http://test.qq.com/report",
-                combo: 1,
                 delay: 200,
                 submit: function(url) {
                     var match1 = url.indexOf("testDefine");

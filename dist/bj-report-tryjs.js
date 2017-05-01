@@ -328,9 +328,14 @@ var BJ_REPORT = (function(global) {
     var _process_log = function(isReportNow) {
         if (!_config._reportUrl) return;
 
+        var randomIgnore = Math.random() >= _config.random;
+
+
         while (_log_list.length) {
             var isIgnore = false;
             var report_log = _log_list.shift();
+            //有效保证字符不要过长
+            report_log.msg = (report_log.msg + "" || "").substr(0,500);
             // 重复上报
             if (T.isRepeat(report_log)) continue;
             var log_str = _report_log_tostring(report_log, submit_log_list.length);
@@ -345,14 +350,15 @@ var BJ_REPORT = (function(global) {
                 }
             }
             if (!isIgnore) {
-                // not offline , submit
-                if(report_log.level != 20){
-                    submit_log_list.push(log_str[0]);
-                }
-                _config.onReport && (_config.onReport(_config.id, report_log));
                 _config.offlineLog && _save2Offline( "badjs_" + _config.id + _config.uin, report_log );
+                if(!randomIgnore && report_log.level != 20){
+                    submit_log_list.push(log_str[0]);
+                    _config.onReport && (_config.onReport(_config.id, report_log));
+                }
+
             }
         }
+
 
         if (isReportNow) {
             _submit_log(); // 立即上报
@@ -365,10 +371,6 @@ var BJ_REPORT = (function(global) {
 
     var report = global.BJ_REPORT = {
         push: function(msg) { // 将错误推到缓存池
-            // 抽样
-            if (Math.random() >= _config.random) {
-                return report;
-            }
 
             var data = T.isOBJ(msg) ? T.processError(msg) : {
                 msg: msg
@@ -425,6 +427,10 @@ var BJ_REPORT = (function(global) {
         },
 
         reportOfflineLog : function (){
+            if (!window.indexedDB){
+                BJ_REPORT.info("unsupport offlineLog");
+                return ;
+            }
             Offline_DB.ready(function (err , DB){
                 if(!DB){
                     return;

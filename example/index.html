@@ -9,14 +9,23 @@
 </head>
 <body>
     <script>
-        BJ_REPORT.init({
-            id: 7,
-            url: "http://127.0.0.1/badjs",
-        }).tryJs().spyAll();
 
-        BJ_REPORT.push('repeat test');
-        BJ_REPORT.push('repeat test');
-        BJ_REPORT.push('repeat test');
+        //初始化
+        BJ_REPORT.init({id: 1 , random: 0.001})
+
+        //主动上报错误日志
+        BJ_REPORT.report("error msg 2");
+
+        //info上报，用于记录操作日志
+        BJ_REPORT.info("info");
+
+        //可以结合实时上报，跟踪问题; 不存入存储
+        BJ_REPORT.debug("debug");
+
+        //记录离线日志
+        BJ_REPORT.offlineLog("offlineLog");
+
+
     </script>
 </body>
 </html>

@@ -5,7 +5,7 @@
     "description": "client report",
     "homepage": "https://github.com/BetterJS/badjs-report",
     "scripts": {
-        "test": "grunt test"
+        "test": "grunt dist"
     },
     "author": [{
         "name": "yorts52",
