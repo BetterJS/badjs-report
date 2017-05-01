@@ -1,4 +1,4 @@
-badjs-report -- 前端日志上报与js错误异常监控
+badjs-report -- 前端日志上报与JS异常监控
 ---
 
 [![Build Status](https://travis-ci.org/BetterJS/badjs-report.svg?branch=master)](https://travis-ci.org/BetterJS/badjs-report)
