@@ -312,6 +312,10 @@ var BJ_REPORT = (function(global) {
     var _submit_log = function() {
         clearTimeout(comboTimeout);
 
+        if(!submit_log_list.length){
+            return ;
+        }
+
         var url =_config._reportUrl + submit_log_list.join("&") + "&count=" + submit_log_list.length + "&_t=" + (+new Date);
 
         if (_config.submit) {
