@@ -34,6 +34,7 @@ var BJ_REPORT = (function(global) {
                 var self = this;
                 if(!window.indexedDB){
                     _config.offlineLog = false;
+                    return callback();
                 }
 
                 if(this.db){
@@ -98,7 +99,8 @@ var BJ_REPORT = (function(global) {
                     if(cursor.value.time >= opt.start && cursor.value.time <= opt.end &&   cursor.value.id ==  opt.id && cursor.value.uin == opt.uin){
                         result.push(cursor.value);
                     }
-                    cursor.continue();
+                    //# cursor.continue
+                    cursor["continue"]();
                 }else {
                     callback(null , result);
                 }
@@ -123,8 +125,8 @@ var BJ_REPORT = (function(global) {
             request.onsuccess = function (event) {
                 var cursor = event.target.result;
                 if (cursor && (cursor.value.time < range || !cursor.value.time)) {
-                    store.delete(cursor.primaryKey);
-                    cursor.continue();
+                    store["delete"](cursor.primaryKey);
+                    cursor["continue"]();
                 }
             };
         },
@@ -529,18 +531,22 @@ var BJ_REPORT = (function(global) {
                 _process_log();
             }
 
-            // init offline
-            Offline_DB.ready(function (err , DB){
-                if(DB){
-                    setTimeout(function (){
-                        DB.clearDB(_config.offlineLogExp );
+                // init offline
+            if(!Offline_DB._initing){
+                Offline_DB._initing = true;
+                Offline_DB.ready(function (err , DB){
+                    if(DB){
                         setTimeout(function (){
-                            _config.offlineLogAuto && _autoReportOffline();
-                        },5000);
-                    },1000);
-                }
+                            DB.clearDB(_config.offlineLogExp );
+                            setTimeout(function (){
+                                _config.offlineLogAuto && _autoReportOffline();
+                            },5000);
+                        },1000);
+                    }
 
-            });
+                });
+            }
+
 
 
             return report;
