@@ -4,7 +4,7 @@ badjs-report -- 前端日志上报与JS异常监控
 [![Build Status](https://travis-ci.org/BetterJS/badjs-report.svg?branch=master)](https://travis-ci.org/BetterJS/badjs-report)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/BetterJS?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
 ## Author
-[caihuiji](https://github.com/caihuiji) [yorts52](https://github.com/yorts52) 
+[caihuiji](https://github.com/caihuiji) [yorts52](https://github.com/yorts52)
 
 ## Install
 
@@ -42,7 +42,7 @@ BJ_REPORT.init({
   onReport: function(id, errObj){},     // 当上报的时候回调。 id: 上报的 id, errObj: 错误的对象
   submit,                               // 覆盖原来的上报方式，可以自行修改为 post 上报等
   ext: {}                               // 扩展属性，后端做扩展处理属性。例如：存在 msid 就会分发到 monitor,
-  offlineLog : true,                    // 是否启离线日志 [默认 true] 
+  offlineLog : true,                    // 是否启离线日志 [默认 true]
   offlineLogExp : 5,                    // 离线有效时间，默认最近5天
 });
 ```
@@ -82,7 +82,7 @@ BJ_REPORT.report();
 
 ```
 
-#####  上报离线日志   
+#####  上报离线日志  
 
 ```javascript
 BJ_REPORT.reportOfflineLog();
@@ -99,13 +99,13 @@ BJ_REPORT.init({id: 1})
 BJ_REPORT.report("error msg 2");
 
 //info上报，用于记录操作日志
-BJ_REPORT.info("info"); 
+BJ_REPORT.info("info");
 
 //可以结合实时上报，跟踪问题; 不存入存储
-BJ_REPORT.debug("debug");  
+BJ_REPORT.debug("debug");
 
 //记录离线日志  
-BJ_REPORT.offlineLog("offlineLog");  
+BJ_REPORT.offlineLog("offlineLog");
 ```
 <br/>
 
@@ -154,7 +154,7 @@ BJ_REPORT.tryJs().spyAll();
 
 ## update log
 
-##### v1.3 (内测中)
+##### v1.3.1
 1. 支持离线日志
 2. 支持自动上报离线日志
 
