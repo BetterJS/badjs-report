@@ -46,6 +46,12 @@ var BJ_REPORT = (function(global) {
                 }
                 var version= 1;
                 var request=window.indexedDB.open("badjs" , version);
+
+                if(!request){
+                    _config.offlineLog = false;
+                    return callback();
+                }
+
                 request.onerror=function(e){
                     callback(e);
                     console.log("indexdb request error");
