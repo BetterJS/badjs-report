@@ -54,7 +54,9 @@ var BJ_REPORT = (function(global) {
 
                 request.onerror=function(e){
                     callback(e);
+                    _config.offlineLog = false;
                     console.log("indexdb request error");
+                    return true;
                 };
                 request.onsuccess=function(e){
                     self.db = e.target.result;
@@ -114,6 +116,7 @@ var BJ_REPORT = (function(global) {
 
             request.onerror = function (e){
                 callback(e);
+                return true;
             };
         },
         clearDB : function (daysToMaintain){
@@ -181,7 +184,8 @@ var BJ_REPORT = (function(global) {
                         msg: stack,
                         rowNum: rowCols[1],
                         colNum: rowCols[2],
-                        target: url.replace(rowCols[0], "")
+                        target: url.replace(rowCols[0], ""),
+                        _orgMsg : errObj.toString()
                     };
                 } else {
                     //ie 独有 error 对象信息，try-catch 捕获到错误信息传过来，造成没有msg
@@ -238,7 +242,8 @@ var BJ_REPORT = (function(global) {
             msg: newMsg,
             target: url,
             rowNum: line,
-            colNum: col
+            colNum: col,
+            _orgMsg : msg
         });
 
         _process_log();
@@ -397,7 +402,20 @@ var BJ_REPORT = (function(global) {
             if (!data.from) {
                 data.from = location.href;
             }
-            _log_list.push(data);
+
+            if(data._orgMsg){
+                var _orgMsg = data._orgMsg;
+                delete data._orgMsg;
+                data.level = 2;
+                var newData = T.extend({} , data);
+                newData.level = 4;
+                newData.msg = _orgMsg ;
+                _log_list.push(data);
+                _log_list.push(newData);
+            }else {
+                _log_list.push(data);
+            }
+
             _process_log();
             return report;
         },
