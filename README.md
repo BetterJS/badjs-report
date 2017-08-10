@@ -153,6 +153,8 @@ BJ_REPORT.tryJs().spyAll();
 ```
 
 ## update log
+##### v1.3.3
+1. BUGFIX
 
 ##### v1.3.1
 1. 支持离线日志
