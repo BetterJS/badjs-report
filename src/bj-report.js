@@ -23,7 +23,7 @@ var BJ_REPORT = (function(global) {
         delay: 1000, // 延迟上报 combo 为 true 时有效
         submit: null, // 自定义上报方式
         repeat: 5 , // 重复上报次数(对于同一个错误超过多少次不上报),
-        offlineLog : true,
+        offlineLog : false,
         offlineLogExp : 5,  // 离线日志过期时间 ， 默认5天
         offlineLogAuto : false,  //是否自动询问服务器需要自动上报
     };
@@ -32,7 +32,7 @@ var BJ_REPORT = (function(global) {
         db : null,
         ready : function (callback){
                 var self = this;
-                if(!window.indexedDB){
+                if(!window.indexedDB || !_config.offlineLog ){
                     _config.offlineLog = false;
                     return callback();
                 }
