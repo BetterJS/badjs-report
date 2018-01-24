@@ -40,9 +40,9 @@ BJ_REPORT.init({
   repeat: 5,                            // 重复上报次数(对于同一个错误超过多少次不上报)
                                         // 避免出现单个用户同一错误上报过多的情况
   onReport: function(id, errObj){},     // 当上报的时候回调。 id: 上报的 id, errObj: 错误的对象
-  submit: null,                               // 覆盖原来的上报方式，可以自行修改为 post 上报等
-  ext: {},                               // 扩展属性，后端做扩展处理属性。例如：存在 msid 就会分发到 monitor,
-  offlineLog : false,                    // 是否启离线日志 [默认 false]
+  submit: null,                         // 覆盖原来的上报方式，可以自行修改为 post 上报等
+  ext: {},                              // 扩展属性，后端做扩展处理属性。例如：存在 msid 就会分发到 monitor,
+  offlineLog : false,                   // 是否启离线日志 [默认 false]
   offlineLogExp : 5,                    // 离线有效时间，默认最近5天
 });
 ```
