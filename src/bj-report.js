@@ -22,116 +22,116 @@ var BJ_REPORT = (function(global) {
         random: 1, // 抽样 (0-1] 1-全量
         delay: 1000, // 延迟上报 combo 为 true 时有效
         submit: null, // 自定义上报方式
-        repeat: 5 , // 重复上报次数(对于同一个错误超过多少次不上报),
-        offlineLog : false,
-        offlineLogExp : 5,  // 离线日志过期时间 ， 默认5天
-        offlineLogAuto : false,  //是否自动询问服务器需要自动上报
+        repeat: 5, // 重复上报次数(对于同一个错误超过多少次不上报),
+        offlineLog: false,
+        offlineLogExp: 5,  // 离线日志过期时间 ， 默认5天
+        offlineLogAuto: false,  //是否自动询问服务器需要自动上报
     };
 
     var Offline_DB = {
-        db : null,
-        ready : function (callback){
-                var self = this;
-                if(!window.indexedDB || !_config.offlineLog ){
-                    _config.offlineLog = false;
-                    return callback();
+        db: null,
+        ready: function(callback) {
+            var self = this;
+            if (!window.indexedDB || !_config.offlineLog) {
+                _config.offlineLog = false;
+                return callback();
+            }
+
+            if (this.db) {
+                setTimeout(function() {
+                    callback(null, self);
+                }, 0);
+
+                return;
+            }
+            var version = 1;
+            var request = window.indexedDB.open("badjs", version);
+
+            if (!request) {
+                _config.offlineLog = false;
+                return callback();
+            }
+
+            request.onerror = function(e) {
+                callback(e);
+                _config.offlineLog = false;
+                console.log("indexdb request error");
+                return true;
+            };
+            request.onsuccess = function(e) {
+                self.db = e.target.result;
+
+                setTimeout(function() {
+                    callback(null, self);
+                }, 500);
+
+
+            };
+            request.onupgradeneeded = function(e) {
+                var db = e.target.result;
+                if (!db.objectStoreNames.contains('logs')) {
+                    db.createObjectStore('logs', { autoIncrement: true });
                 }
-
-                if(this.db){
-                    setTimeout(function (){
-                        callback(null , self );
-                    },0);
-
-                    return;
-                }
-                var version= 1;
-                var request=window.indexedDB.open("badjs" , version);
-
-                if(!request){
-                    _config.offlineLog = false;
-                    return callback();
-                }
-
-                request.onerror=function(e){
-                    callback(e);
-                    _config.offlineLog = false;
-                    console.log("indexdb request error");
-                    return true;
-                };
-                request.onsuccess=function(e){
-                    self.db = e.target.result;
-
-                    setTimeout(function (){
-                        callback(null , self);
-                    },500);
-
-
-                };
-                request.onupgradeneeded=function(e){
-                    var db=e.target.result;
-                    if(!db.objectStoreNames.contains('logs')){
-                        db.createObjectStore('logs', { autoIncrement: true });
-                    }
-                };
+            };
         },
-        insertToDB : function (log){
-            var store= this.getStore();
+        insertToDB: function(log) {
+            var store = this.getStore();
             store.add(log);
         },
-        addLog : function (log){
-            if(!this.db){
-                return ;
+        addLog: function(log) {
+            if (!this.db) {
+                return;
             }
             this.insertToDB(log);
         },
-        addLogs : function (logs){
-            if(!this.db){
+        addLogs: function(logs) {
+            if (!this.db) {
                 return;
             }
 
-            for(var i = 0;i <  logs.length ; i++){
-                this.addLog( logs[i]);
+            for (var i = 0; i < logs.length; i++) {
+                this.addLog(logs[i]);
             }
 
         },
-        getLogs : function (opt  , callback ){
-            if(!this.db){
+        getLogs: function(opt, callback) {
+            if (!this.db) {
                 return;
             }
-            var store= this.getStore();
+            var store = this.getStore();
             var request = store.openCursor();
             var result = [];
-            request.onsuccess = function (event) {
+            request.onsuccess = function(event) {
                 var cursor = event.target.result;
-                if (cursor ) {
-                    if(cursor.value.time >= opt.start && cursor.value.time <= opt.end &&   cursor.value.id ==  opt.id && cursor.value.uin == opt.uin){
+                if (cursor) {
+                    if (cursor.value.time >= opt.start && cursor.value.time <= opt.end && cursor.value.id == opt.id && cursor.value.uin == opt.uin) {
                         result.push(cursor.value);
                     }
                     //# cursor.continue
                     cursor["continue"]();
-                }else {
-                    callback(null , result);
+                } else {
+                    callback(null, result);
                 }
             };
 
-            request.onerror = function (e){
+            request.onerror = function(e) {
                 callback(e);
                 return true;
             };
         },
-        clearDB : function (daysToMaintain){
-            if(!this.db){
+        clearDB: function(daysToMaintain) {
+            if (!this.db) {
                 return;
             }
 
-            var store= this.getStore();
+            var store = this.getStore();
             if (!daysToMaintain) {
                 store.clear();
-                return ;
+                return;
             }
             var range = (Date.now() - (daysToMaintain || 2) * 24 * 3600 * 1000);
             var request = store.openCursor();
-            request.onsuccess = function (event) {
+            request.onsuccess = function(event) {
                 var cursor = event.target.result;
                 if (cursor && (cursor.value.time < range || !cursor.value.time)) {
                     store["delete"](cursor.primaryKey);
@@ -140,36 +140,36 @@ var BJ_REPORT = (function(global) {
             };
         },
 
-        getStore: function (){
-            var transaction=this.db.transaction("logs",'readwrite');
+        getStore: function() {
+            var transaction = this.db.transaction("logs", 'readwrite');
             return transaction.objectStore("logs");
         },
 
     };
 
     var T = {
-        isOBJByType: function (o, type) {
+        isOBJByType: function(o, type) {
             return Object.prototype.toString.call(o) === "[object " + (type || "Object") + "]";
         },
 
-        isOBJ: function (obj) {
+        isOBJ: function(obj) {
             var type = typeof obj;
             return type === "object" && !!obj;
         },
-        isEmpty: function (obj) {
+        isEmpty: function(obj) {
             if (obj === null) return true;
             if (T.isOBJByType(obj, "Number")) {
                 return false;
             }
             return !obj;
         },
-        extend : function (src , source){
-            for(var key in source){
+        extend: function(src, source) {
+            for (var key in source) {
                 src[key] = source[key];
             }
             return src;
         },
-        processError: function (errObj) {
+        processError: function(errObj) {
             try {
                 if (errObj.stack) {
                     var url = errObj.stack.match("https?://[^\n]+");
@@ -185,7 +185,7 @@ var BJ_REPORT = (function(global) {
                         rowNum: rowCols[1],
                         colNum: rowCols[2],
                         target: url.replace(rowCols[0], ""),
-                        _orgMsg : errObj.toString()
+                        _orgMsg: errObj.toString()
                     };
                 } else {
                     //ie 独有 error 对象信息，try-catch 捕获到错误信息传过来，造成没有msg
@@ -201,7 +201,7 @@ var BJ_REPORT = (function(global) {
             }
         },
 
-        processStackMsg: function (error) {
+        processStackMsg: function(error) {
             var stack = error.stack
                 .replace(/\n/gi, "")
                 .split(/\bat\b/)
@@ -215,7 +215,7 @@ var BJ_REPORT = (function(global) {
             return stack;
         },
 
-        isRepeat : function(error) {
+        isRepeat: function(error) {
             if (!T.isOBJ(error)) return true;
             var msg = error.msg;
             var times = _log_map[msg] = (parseInt(_log_map[msg], 10) || 0) + 1;
@@ -243,7 +243,7 @@ var BJ_REPORT = (function(global) {
             target: url,
             rowNum: line,
             colNum: col,
-            _orgMsg : msg
+            _orgMsg: msg
         });
 
         _process_log();
@@ -283,20 +283,20 @@ var BJ_REPORT = (function(global) {
 
 
 
-    var  _offline_buffer = [];
-    var _save2Offline = function(key , msgObj ) {
-        msgObj  = T.extend({id : _config.id , uin : _config.uin , time : new Date - 0} , msgObj);
+    var _offline_buffer = [];
+    var _save2Offline = function(key, msgObj) {
+        msgObj = T.extend({ id: _config.id, uin: _config.uin, time: new Date - 0 }, msgObj);
 
-        if(Offline_DB.db){
+        if (Offline_DB.db) {
             Offline_DB.addLog(msgObj);
-            return ;
+            return;
         }
 
 
-        if(!Offline_DB.db && !_offline_buffer.length){
-            Offline_DB.ready(function (err , DB){
-                if(DB){
-                    if(_offline_buffer.length){
+        if (!Offline_DB.db && !_offline_buffer.length) {
+            Offline_DB.ready(function(err, DB) {
+                if (DB) {
+                    if (_offline_buffer.length) {
                         DB.addLogs(_offline_buffer);
                         _offline_buffer = [];
                     }
@@ -307,11 +307,11 @@ var BJ_REPORT = (function(global) {
         _offline_buffer.push(msgObj);
     };
 
-    var _autoReportOffline = function (){
+    var _autoReportOffline = function() {
         var script = document.createElement("script");
-        script.src = _config.offline_auto_url || _config.url.replace(/badjs$/ , "offlineAuto") + "?id="+_config.id + "&uin="+_config.uin;
-        window._badjsOfflineAuto = function (isReport){
-            if(isReport){
+        script.src = _config.offline_auto_url || _config.url.replace(/badjs$/, "offlineAuto") + "?id=" + _config.id + "&uin=" + _config.uin;
+        window._badjsOfflineAuto = function(isReport) {
+            if (isReport) {
                 BJ_REPORT.reportOfflineLog();
             }
         };
@@ -325,11 +325,11 @@ var BJ_REPORT = (function(global) {
     var _submit_log = function() {
         clearTimeout(comboTimeout);
 
-        if(!submit_log_list.length){
-            return ;
+        if (!submit_log_list.length) {
+            return;
         }
 
-        var url =_config._reportUrl + submit_log_list.join("&") + "&count=" + submit_log_list.length + "&_t=" + (+new Date);
+        var url = _config._reportUrl + submit_log_list.join("&") + "&count=" + submit_log_list.length + "&_t=" + (+new Date);
 
         if (_config.submit) {
             _config.submit(url);
@@ -352,7 +352,7 @@ var BJ_REPORT = (function(global) {
             var isIgnore = false;
             var report_log = _log_list.shift();
             //有效保证字符不要过长
-            report_log.msg = (report_log.msg + "" || "").substr(0,500);
+            report_log.msg = (report_log.msg + "" || "").substr(0, 500);
             // 重复上报
             if (T.isRepeat(report_log)) continue;
             var log_str = _report_log_tostring(report_log, submit_log_list.length);
@@ -367,8 +367,8 @@ var BJ_REPORT = (function(global) {
                 }
             }
             if (!isIgnore) {
-                _config.offlineLog && _save2Offline( "badjs_" + _config.id + _config.uin, report_log );
-                if(!randomIgnore && report_log.level != 20){
+                _config.offlineLog && _save2Offline("badjs_" + _config.id + _config.uin, report_log);
+                if (!randomIgnore && report_log.level != 20) {
                     submit_log_list.push(log_str[0]);
                     _config.onReport && (_config.onReport(_config.id, report_log));
                 }
@@ -403,23 +403,23 @@ var BJ_REPORT = (function(global) {
                 data.from = location.href;
             }
 
-            if(data._orgMsg){
+            if (data._orgMsg) {
                 var _orgMsg = data._orgMsg;
                 delete data._orgMsg;
                 data.level = 2;
-                var newData = T.extend({} , data);
+                var newData = T.extend({}, data);
                 newData.level = 4;
-                newData.msg = _orgMsg ;
+                newData.msg = _orgMsg;
                 _log_list.push(data);
                 _log_list.push(newData);
-            }else {
+            } else {
                 _log_list.push(data);
             }
 
             _process_log();
             return report;
         },
-        report: function(msg , isReportNow) { // error report
+        report: function(msg, isReportNow) { // error report
             msg && report.push(msg);
 
             isReportNow && _process_log(true);
@@ -456,51 +456,51 @@ var BJ_REPORT = (function(global) {
             return report;
         },
 
-        reportOfflineLog : function (){
-            if (!window.indexedDB){
+        reportOfflineLog: function() {
+            if (!window.indexedDB) {
                 BJ_REPORT.info("unsupport offlineLog");
-                return ;
+                return;
             }
-            Offline_DB.ready(function (err , DB){
-                if(!DB){
+            Offline_DB.ready(function(err, DB) {
+                if (!DB) {
                     return;
                 }
-                var startDate = new Date - 0 - _config.offlineLogExp* 24 * 3600 * 1000;
+                var startDate = new Date - 0 - _config.offlineLogExp * 24 * 3600 * 1000;
                 var endDate = new Date - 0;
-                DB.getLogs( {
-                    start : startDate,
-                    end : endDate,
-                    id :  _config.id ,
-                    uin :  _config.uin
-                } , function (err , result){
+                DB.getLogs({
+                    start: startDate,
+                    end: endDate,
+                    id: _config.id,
+                    uin: _config.uin
+                }, function(err, result) {
                     var iframe = document.createElement("iframe");
-                    iframe.name = "badjs_offline_"+(new Date -0 );
+                    iframe.name = "badjs_offline_" + (new Date - 0);
                     iframe.frameborder = 0;
                     iframe.height = 0;
                     iframe.width = 0;
                     iframe.src = "javascript:false;";
 
-                    iframe.onload = function (){
+                    iframe.onload = function() {
                         var form = document.createElement("form");
                         form.style.display = "none";
-                        form.target =  iframe.name ;
+                        form.target = iframe.name;
                         form.method = "POST";
-                        form.action = _config.offline_url || _config.url.replace(/badjs$/ , "offlineLog");
+                        form.action = _config.offline_url || _config.url.replace(/badjs$/, "offlineLog");
                         form.enctype.method = 'multipart/form-data';
 
                         var input = document.createElement("input");
                         input.style.display = "none";
                         input.type = "hidden";
                         input.name = "offline_log";
-                        input.value = JSON.stringify({logs : result , userAgent : navigator.userAgent , startDate : startDate , endDate : endDate , id :_config.id , uin:_config.uin});
+                        input.value = JSON.stringify({ logs: result, userAgent: navigator.userAgent, startDate: startDate, endDate: endDate, id: _config.id, uin: _config.uin });
 
                         iframe.contentDocument.body.appendChild(form);
                         form.appendChild(input);
                         form.submit();
 
-                        setTimeout(function (){
+                        setTimeout(function() {
                             document.body.removeChild(iframe);
-                        },10000);
+                        }, 10000);
 
                         iframe.onload = null;
                     };
@@ -508,7 +508,7 @@ var BJ_REPORT = (function(global) {
                 });
             });
         },
-        offlineLog : function (msg){
+        offlineLog: function(msg) {
             if (!msg) {
                 return report;
             }
@@ -555,17 +555,17 @@ var BJ_REPORT = (function(global) {
                 _process_log();
             }
 
-                // init offline
-            if(!Offline_DB._initing){
+            // init offline
+            if (!Offline_DB._initing) {
                 Offline_DB._initing = true;
-                Offline_DB.ready(function (err , DB){
-                    if(DB){
-                        setTimeout(function (){
-                            DB.clearDB(_config.offlineLogExp );
-                            setTimeout(function (){
+                Offline_DB.ready(function(err, DB) {
+                    if (DB) {
+                        setTimeout(function() {
+                            DB.clearDB(_config.offlineLogExp);
+                            setTimeout(function() {
                                 _config.offlineLogAuto && _autoReportOffline();
-                            },5000);
-                        },1000);
+                            }, 5000);
+                        }, 1000);
                     }
 
                 });

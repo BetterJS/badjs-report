@@ -5,33 +5,41 @@
     "description": "client report",
     "homepage": "https://github.com/BetterJS/badjs-report",
     "scripts": {
-        "test": "grunt dist"
+        "test": "grunt dist",
+        "GFW": "npm install --phantomjs_cdnurl=https://npm.taobao.org/mirrors/phantomjs"
     },
-    "author": [{
-        "name": "yorts52",
-        "email": "yorts52@qq.com"
-    }, {
-        "name": "chriscai",
-        "email": "caihuijigood@gmail.com"
-    }],
+    "author": [
+        {
+            "name": "yorts52",
+            "email": "yorts52@qq.com"
+        },
+        {
+            "name": "chriscai",
+            "email": "caihuijigood@gmail.com"
+        }
+    ],
     "repository": {
         "url": "https://github.com/BetterJS/badjs-report.git"
     },
     "bugs": "https://github.com/BetterJS/badjs-report.git/issues",
     "license": "MIT",
-    "keywords": ["BetterJS", "badjs", "report"],
+    "keywords": [
+        "BetterJS",
+        "badjs",
+        "report"
+    ],
     "devDependencies": {
-        "grunt": "0.4.5",
-        "mocha": "~1.9",
-        "chai": "~1.4.0",
-        "grunt-mocha": "0.3",
-        "requirejs": "^2.1.14",
+        "grunt": "1.0.2",
+        "mocha": "~5.0",
+        "chai": "~4.1.2",
+        "grunt-mocha": "1.0",
+        "requirejs": "^2.3.5",
         "jquery": "*",
-        "grunt-contrib-copy": "~0.4.1",
-        "grunt-contrib-clean": "^0.6.0",
-        "grunt-contrib-jshint": "~0.6.2",
-        "grunt-contrib-uglify": "^0.5.1",
-        "grunt-contrib-concat": "~0.5.1"
+        "grunt-contrib-copy": "~1.0.0",
+        "grunt-contrib-clean": "^1.1.0",
+        "grunt-contrib-jshint": "~1.1.0",
+        "grunt-contrib-uglify": "^3.3.0",
+        "grunt-contrib-concat": "~1.0.1"
     },
     "lego": {
         "category": "35",
