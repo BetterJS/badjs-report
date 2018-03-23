@@ -53,7 +53,7 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
                 }
             });
             BJ_REPORT.__onerror__("msg", 0, 0, null);
-            BJ_REPORT.report(null , true);
+            BJ_REPORT.report(null, true);
 
             setTimeout(function() {
                 should.equal(count, 1);
@@ -189,7 +189,7 @@ define(['../src/bj-report.js', '../src/bj-wrap.js'], function(report) {
             BJ_REPORT.push('repeatTest');
             BJ_REPORT.push('repeatTest');
             BJ_REPORT.push('repeatTest');
-            BJ_REPORT.report('repeatTest' , true);
+            BJ_REPORT.report('repeatTest', true);
         });
     });
 

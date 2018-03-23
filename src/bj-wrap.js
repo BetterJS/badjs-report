@@ -45,7 +45,7 @@
                 // hang up browser and throw , but it should trigger onerror , so rewrite onerror then recover it
                 if (!timeoutkey) {
                     var orgOnerror = global.onerror;
-                    global.onerror = function() {};
+                    global.onerror = function() { };
                     timeoutkey = setTimeout(function() {
                         global.onerror = orgOnerror;
                         timeoutkey = null;
@@ -97,10 +97,10 @@
             var arg, tmp, args = [];
             for (var i = 0, l = arguments.length; i < l; i++) {
                 arg = arguments[i];
-                if(_isFunction(arg)){
-                    if(arg.tryWrap){
+                if (_isFunction(arg)) {
+                    if (arg.tryWrap) {
                         arg = arg.tryWrap;
-                    }else {
+                    } else {
                         tmp = cat(arg);
                         arg.tryWrap = tmp;
                         arg = tmp;

@@ -12,7 +12,7 @@ module.exports = function(grunt) {
                     'dist/bj-report.min.js': ["dist/bj-report.js"]
                 }, {
                     'dist/bj-report-tryjs.min.js': ["dist/bj-report-tryjs.js"]
-                }, ]
+                },]
             }
         },
         copy: {
