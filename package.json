@@ -1,6 +1,6 @@
 {
     "name": "badjs-report",
-    "version": "1.3.3",
+    "version": "1.3.4",
     "main": "dist/bj-report-tryjs.js",
     "description": "client report",
     "homepage": "https://github.com/BetterJS/badjs-report",
