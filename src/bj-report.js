@@ -332,7 +332,7 @@ var BJ_REPORT = (function(global) {
         var url = _config._reportUrl + submit_log_list.join("&") + "&count=" + submit_log_list.length + "&_t=" + (+new Date);
 
         if (_config.submit) {
-            _config.submit(url);
+            _config.submit(url, submit_log_list);
         } else {
             var _img = new Image();
             _img.src = url;
