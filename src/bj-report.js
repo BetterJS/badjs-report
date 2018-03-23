@@ -324,6 +324,8 @@ var BJ_REPORT = (function(global) {
     var comboTimeout = 0;
     var _submit_log = function() {
         clearTimeout(comboTimeout);
+        // https://github.com/BetterJS/badjs-report/issues/34
+        comboTimeout = 0;
 
         if (!submit_log_list.length) {
             return;
@@ -338,7 +340,6 @@ var BJ_REPORT = (function(global) {
             _img.src = url;
         }
 
-        comboTimeout = 0;
         submit_log_list = [];
     };
 
