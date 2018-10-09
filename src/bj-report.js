@@ -526,9 +526,7 @@ var BJ_REPORT = (function(global) {
         },
         init: function(config) { // 初始化
             if (T.isOBJ(config)) {
-                for (var key in config) {
-                    _config[key] = config[key];
-                }
+                T.extend(_config, config);
             }
             // 没有设置id将不上报
             var id = parseInt(_config.id, 10);
